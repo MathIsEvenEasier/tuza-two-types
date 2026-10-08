@@ -82,10 +82,15 @@ def main():
     if not match:raise RuntimeError('Missing final axiom audit')
     axioms=sorted(a.strip() for a in match[1].split(','))
     if set(axioms)!=ALLOWED:raise RuntimeError('Final axiom set changed')
+    source_report={'status':'SOURCE_BUILD_VERIFIED','modules':len(done),'theorem':theorem,'axioms':axioms,'all_project_modules_built_from_source':True,'project_olean_inputs':0}
+    (out/'source-build-report.json').write_text(json.dumps(source_report,indent=2)+'\n')
+    # This test runs alone. Its interpreter loads the complete imported package,
+    # so it needs a larger cap than a standalone arithmetic certificate.
+    negative_start=time.monotonic()
     negative=source/'NegativeControl.lean';negative.write_text('import Result\nexample : (1 : ℕ) = 0 := by decide\n')
-    p=subprocess.run(['lake','env','lean','-j1','-M2400','-DElab.async=false',str(negative)],cwd=work,env=dict(os.environ,LEAN_PATH=str(target)),capture_output=True,text=True,timeout=60)
+    p=subprocess.run(['lake','env','lean','-j1','-M32000','-DElab.async=false',str(negative)],cwd=work,env=dict(os.environ,LEAN_PATH=str(target)),capture_output=True,text=True,timeout=180)
     log=p.stdout+p.stderr;(out/'negative-control.log').write_text(log)
     if not(p.returncode==1 and 'error:' in log and 'is false' in log and 'decide' in log):raise RuntimeError('Negative control was not rejected normally')
-    report={'status':'VERIFIED','modules':len(done),'theorem':theorem,'axioms':axioms,'negative_control_rejected':True,'all_project_modules_built_from_source':True,'project_olean_inputs':0,'memory_limited_attempts':len(attempts)}
+    report={'status':'VERIFIED','modules':len(done),'theorem':theorem,'axioms':axioms,'negative_control_rejected':True,'all_project_modules_built_from_source':True,'project_olean_inputs':0,'memory_limited_attempts':len(attempts),'negative_control_memory_limit_mib':32000,'negative_control_seconds':round(time.monotonic()-negative_start,3)}
     (out/'rebuild-report.json').write_text(json.dumps(report,indent=2)+'\n');print(final,flush=True);print(json.dumps(report),flush=True)
 if __name__=='__main__':main()

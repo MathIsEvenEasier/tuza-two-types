@@ -106,7 +106,7 @@ four main files are in Git; all 3,186 generated certificate modules are in
 the two versioned release assets. No compiled Lean objects are distributed
 as necessary build inputs. A changed, missing or extra source is rejected.
 
-All compilation must run on Azure. The included ``ci/azure/audit.py``
+The supplied build workflow runs on Azure. The ``ci/azure/audit.py``
 controller provisions a repository-scoped ephemeral runner, installs an
 independent cloud deletion guard before compute starts, limits the worker
 to 48 GiB without swap and 175 minutes, and sets a 185-minute cloud deadline.
