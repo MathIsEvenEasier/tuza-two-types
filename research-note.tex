@@ -8,7 +8,7 @@
 \newcommand{\tc}{\tau_{\triangle}}
 \newcommand{\mc}{\operatorname{MaxCut}}
 \title{Two neighborhood types in Tuza's conjecture\\
-\large Direct covers, quantitative margins, and compatible packings}
+\large Proof constructions and formal verification}
 \author{Working research notes\\OpenAI Codex (GPT-6 Astra)}
 \date{8 October 2026}
 \begin{document}
@@ -33,8 +33,7 @@ stronger bounds, failed comparisons and historical verification checkpoints.
 Their partial-status comments describe those checkpoints, not the completed
 formalization. The final route does not use the exact clique-packing formula,
 a threshold-graph theorem, the exact cover formula, or permutation averaging.
-This proves the stated two-type subclass, not Tuza's conjecture for arbitrary
-graphs. No publication priority or independent expert review is claimed.
+Tuza's conjecture for arbitrary graphs remains open.
 
 \section{The graph class and notation}
 All graphs are finite, simple, and undirected. Let $G$ have a split partition
@@ -182,7 +181,7 @@ local source. The worker had a 16 GiB memory limit, a 25-minute runtime
 limit, and an independent cloud deletion guard. Cleanup evidence is
 recorded separately from proof success.
 
-\textbf{Assessment.} Uniform matching-class sizes and the entire
+\textbf{Checkpoint scope.} Uniform matching-class sizes and the entire
 single-neighborhood allocation bridge are now kernel-checked. The
 independent two-neighborhood allocation below now also has a verified
 compatibility construction and overlap estimate. The coupled-color lower
@@ -359,9 +358,8 @@ attempt failed on one ambiguous lemma name and remains recorded as a
 failure. Both attempts used bounded memory and time and an independent
 cloud deletion guard; cleanup evidence is recorded separately.
 
-\textbf{Assessment.} Both optimization equalities and their common-cap
-corollary are now formalized for the actual graphs. This closes the
-universal multiplicity lemma, not merely another finite range of cases.
+\textbf{Checkpoint scope.} Both optimization equalities and their common-cap
+corollary are formalized for every finite graph in the lemma.
 Uniform matching-class sizes and the single-neighborhood allocation
 are also now verified. The independent two-type allocation and its
 overlap estimate are now verified too, as is the coupled-color lower bound.
@@ -385,8 +383,8 @@ Every two-type instance has an equivalent instance for both $\tc$ and $\tp$
 with at most $k+h(s)+h(t)\leq3k$ vertices. It suffices to truncate the two
 types successively. Inactive types can be deleted altogether.
 \end{corollary}
-This does not bound $k$. It reduces multiplicities uniformly, rather than
-verifying the conjecture for an additional finite clique size.
+The reduction preserves both optima for each $k$; it places no upper bound
+on the clique size.
 
 \section{An extremal lemma for two forbidden cliques}
 For subsets $P,Q$ of a $k$-element set $C$, define
@@ -646,7 +644,6 @@ are a matching; between centers the spokes are distinct; and each core
 edge was assigned only once. This is a full allocation, so
 Theorem~\ref{thm:full-allocation} applies.
 \end{proof}
-This closes an infinite parameter regime rather than one more clique size.
 The inequalities on multiplicities are sufficient, not necessary. They are
 not asserted to be sharp for Tuza's inequality, even though the separate
 compression thresholds in Theorem~\ref{thm:compression} are sharp.
@@ -771,7 +768,7 @@ preparation superseded before launch created no cloud resources. Every
 actual job had bounded memory and time and an independent cloud deletion
 guard; cleanup evidence is recorded separately.
 
-\textbf{Assessment.} One complete two-type graph-to-scalar packing lemma
+\textbf{Checkpoint scope.} One complete two-type graph-to-scalar packing lemma
 is now kernel-checked, including the compatibility step and the center
 condition needed later. The numerical formula and certificate domains
 are unchanged, so existing numerical certificates were not rerun. The
@@ -1089,9 +1086,9 @@ $37$:
  L=\left\lceil40-\frac{250}{81}\right\rceil=37,\quad
  \left\lceil\frac{104(560+360)}{2600}\right\rceil=37.
 \]
-This disproves that sufficient comparison; it does not disprove Tuza's
-inequality. It tells us to construct compatible packings, rather than
-merely take the largest of separate estimates.
+The sufficient comparison fails because $75>2\cdot37$. Tuza's inequality
+would still follow from a packing of size $38$ or more. We therefore
+combine outside-centered triangles with triangles in the remaining core.
 
 \begin{lemma}[Keeping the residual core]\label{lem:wedges}
 Take any outside-centered packing and let $P$ be its set of core edges.
@@ -1301,9 +1298,8 @@ the wrong side and is retained as a failure. Both jobs had a 16 GiB
 memory cap, a 25-minute worker limit and an independently armed cloud
 deletion guard; cleanup reports are separate from proof success.
 
-\textbf{Assessment.} Both allocation lower bounds used by the final route
-are now formalized for actual graphs. This closes a universal dependency,
-not merely an additional range of finite cases. For the earlier parameter
+\textbf{Checkpoint scope.} Both allocation lower bounds used by the final route
+are formalized for every graph in their statements. For the earlier parameter
 example $s=t=9$, $u=5$, $p=q=5$, the independent expression is
 $2990/81$, with ceiling $37$, whereas the coupled expression is $350/9$,
 with ceiling $39$. These are guaranteed sizes, not exact optima.
@@ -1419,10 +1415,8 @@ Both jobs had a 16 GiB memory cap, a 25-minute worker limit and an
 independently armed cloud deletion guard. Resource deletion is recorded
 separately from proof success.
 
-\textbf{Assessment.} This closes the graph-theoretic completion lemma
-used by the main two-type route, including the required compatibility
-with the previous allocation. It is not a claim that a new finite range
-of instances has been checked. The scalar formulas and certificate
+\textbf{Checkpoint scope.} The completion lemma is formalized, including
+compatibility with the input allocation. The scalar formulas and certificate
 domains remain unchanged, so the numerical certificates were not rerun.
 The explicit cut construction and its exact costs are now formalized
 as described with Lemma~\ref{lem:explicit-cut}; rounding remains.
@@ -1737,7 +1731,7 @@ Again $Q$ decreases in $m\geq0$. At the endpoint, writing $y=k-17\geq0$,
 Averaging proves the required inequality in the final case.
 \end{proof}
 
-\subsection{The genuinely finite remainder}
+\subsection{The finite remainder}
 The preceding theorem leaves only $3\leq k\leq34$ for crossing active
 types of equal size. Equal neighborhoods or a single active type are
 threshold graphs, already covered by~\cite{bonamy}. For crossing types,
@@ -2077,7 +2071,7 @@ interfaces and remains a recorded failure. Both jobs used a 16 GiB cap,
 a 25-minute worker limit and an independently armed cloud cleanup guard.
 Deletion is checked separately from proof success.
 
-\textbf{Assessment.} This supplies actual covers with exact costs for
+\textbf{Checkpoint scope.} This supplies actual covers with exact costs for
 arbitrary finite sizes, including the integer common cuts used in
 Lemma~\ref{lem:common-cut}. It changes no scalar formula or certificate
 domain. The full common-neighborhood rounding bound is now verified as described
@@ -2202,8 +2196,8 @@ revision \texttt{5ed296525643} remain pinned. The worker had a 16 GiB
 cap, a 25-minute limit and an independently armed cloud deletion guard.
 Resource deletion is checked separately from proof success.
 
-\textbf{Assessment.} This closes the general rounding and graph-cover
-construction, not merely finitely many instances. The fractional existence
+\textbf{Checkpoint scope.} The rounding and graph-cover construction is
+formalized under the stated hypotheses. The fractional existence
 step has subsequently been verified as described next. No scalar formula
 or certificate domain changed, so the numerical certificates were not rerun.
 
@@ -2249,16 +2243,15 @@ and a sum binder; its report is retained as a failure. Each worker had
 a 16 GiB cap, a 25-minute limit and an independent cloud deletion guard.
 Deletion is recorded separately from proof verification.
 
-\textbf{Assessment.} The separable cover lemma is completely formalized
-for arbitrary sizes, intersections and multiplicities. This closes a
-universal lemma needed by both the analytic and finite branches. Shadow
+\textbf{Checkpoint scope.} The separable cover lemma is formalized for
+arbitrary sizes, intersections and multiplicities. Both the analytic and
+finite branches use it. Shadow
 covers, the particular fractional-cut formulas, graph bounds and
 representations, scalar reductions, and sound verification of the two
 certificates remain before the final theorem can be claimed in Lean.
 
 For $s=t$, this recovers~\eqref{eq:equal-cut-cover} without exchanging
-the two neighborhoods or balancing their multiplicities. The new lemma
-removes the cover-symmetry obstacle completely. It does not assert that
+the two neighborhoods or balancing their multiplicities. The lemma gives the cover bound directly for unequal sizes. It does not assert that
 different local matching capacities can all be attained simultaneously.
 
 \begin{lemma}[A single type can pay for its separable cover cost]
@@ -2555,7 +2548,7 @@ Both jobs had a 16 GiB worker cap, a 25-minute limit and an independently
 armed cloud deletion guard. Resource deletion is checked separately from
 proof success.
 
-\textbf{Assessment.} The whole common-neighborhood cover lemma, including
+\textbf{Checkpoint scope.} The whole common-neighborhood cover lemma, including
 the $1/4$ allowance and its optimized form, is now kernel-checked. The
 written proof has been simplified to the same deterministic argument.
 No scalar formula or certificate domain changed, so no numerical
@@ -3284,8 +3277,7 @@ The final verification report is retained at
 with source hashes, compiled-object hashes, compiler logs and a separate
 resource-deletion report. Previously checked modules were reused only
 with matching source and object hashes and the same toolchain pins.
-This establishes the stated two-type subclass theorem; it does not resolve
-Tuza's conjecture for arbitrary graphs. No priority claim is made.
+
 
 The earlier sections also record the development of stronger bounds and
 exploratory computations. The following checks are historical context;

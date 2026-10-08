@@ -5,8 +5,7 @@ Every finite simple split graph with at most two distinct active
 independent-side neighborhood types satisfies
 ``tau_triangle(G) <= 2 * nu_triangle(G)``.
 The clique size, the overlap between neighborhoods, and their multiplicities
-are unrestricted. This proves the stated subclass of Tuza's conjecture.
-The general conjecture is not resolved here; publication priority is not claimed.
+are unrestricted. Tuza's conjecture for arbitrary graphs remains open.
 
 `Explore the proof <https://mathiseveneasier.github.io/tuza-two-types/>`_ ·
 `Final Lean theorem <formal/Result.lean>`_ ·
@@ -22,12 +21,11 @@ active type, and arbitrarily many inactive vertices of any type.
 
 A triangle packing consists of pairwise edge-disjoint triangles; its maximum
 size is ``nu_triangle``. A triangle edge cover is a set of edges meeting every
-triangle; its minimum size is ``tau_triangle``. Both definitions in Lean use
-actual graph edges and triangles, and both optima are attained.
+triangle; its minimum size is ``tau_triangle``. Both optima are attained for finite graphs.
 
 The endpoint is ``TuzaTwoTypes.tuza_of_two_active_types``. Its hypotheses
-state precisely the partition and the bound on active types. It takes no
-certificate, oracle, or numerical inequality as an additional hypothesis.
+state precisely the partition and the bound on active types. All certificate comparisons are proved in the project and used to derive
+this theorem.
 
 Proof route
 -----------
@@ -40,8 +38,8 @@ Proof route
    choices for the two overlapping neighborhoods, greedy core completion
    using Mantel's bound, and a sum-coloring argument.
 3. Construct cover upper bounds from cuts, including shadow cuts and an
-   unbalanced cut through the common neighborhood. The comparisons need
-   feasible witnesses or bounds, not an exact solution of either optimum.
+   unbalanced cut through the common neighborhood. These constructions
+   give upper and lower bounds on the two optima.
 4. Compare these bounds. Clique sizes 2 through 42 use a finite certificate
    covering 23,848,371 compressed parameter tuples. Analytic reductions and
    a closed interval certificate cover every size at least 43 at once.
@@ -51,8 +49,8 @@ Proof route
 
 The continuous certificate is a proof on a real domain, with exact directed
 integer rounding, certified splitting and exhaustive domain coverage.
-It is not an extrapolation from sampled clique sizes. Normalization includes
-1/k, so all k >= 43 lie in a bounded domain covered by the certificate.
+Normalization includes 1/k, so all k >= 43 lie in a bounded domain covered
+by the certificate.
 
 What is verified
 ----------------
@@ -75,7 +73,8 @@ release manifest match these previously checked files exactly.
 The public source-build workflow rebuilds all 3,190 project modules without
 accepting any compiled project objects as input. Its run status is available
 under `Actions <https://github.com/MathIsEvenEasier/tuza-two-types/actions/workflows/lean.yml>`_.
-A workflow definition alone is not evidence of a successful rebuild.
+Each run records how many modules compiled and whether the final theorem
+and negative control passed.
 
 Repository guide
 ----------------
@@ -138,8 +137,8 @@ Context and references
 Zijian Zeng's 2026 preprint proves the two-type case for a specified
 **eight-vertex** clique part, with arbitrary multiplicities. The statement
 here removes the bound on the clique size. Bonamy and coauthors prove the
-threshold-graph case, which includes nested neighborhoods. These are scope
-comparisons, not an assertion of priority or independent expert review.
+threshold-graph case, which includes nested neighborhoods. Publication priority has not been established, and the proof has not yet
+received independent expert review.
 
 * M. Bonamy, Ł. Bożyk, A. Grzesik, M. Hatzel, T. Masařík, J. Novotná,
   K. Okrasa, *Tuza's Conjecture for Threshold Graphs*, DMTCS 24(1), 2022:
