@@ -62,21 +62,28 @@ const proof={
 function showProof(key){const d=proof[key];$('proof-detail').innerHTML=`<p class="eyebrow">Role in the proof</p><h3>${d.title}</h3><p>${d.body}</p><div class="formula">${d.formula}</div><p class="detail-role">${d.role}</p><p class="small">Exact declaration</p><a href="${repo+d.file}"><code>${d.name}</code></a><p style="margin-top:25px;margin-bottom:0"><a href="${d.href}">${d.next}</a></p>`;for(const b of document.querySelectorAll('[data-proof]')){b.classList.toggle('selected',b.dataset.proof===key);b.setAttribute('aria-pressed',String(b.dataset.proof===key));}}
 for(const b of document.querySelectorAll('[data-proof]'))b.addEventListener('click',()=>showProof(b.dataset.proof));
 let matchingColor=0;
-function drawMatching(){const s=+$('s-size').value,m=+$('copies').value,classes=matchingColors(s),h=classes.length,r=Math.min(m,h),points=circlePositions(s,250,167,122),svg=$('matching-svg');matchingColor%=h;svg.replaceChildren();
+function drawMatching(){const s=+$('s-size').value,m=+$('copies').value,classes=matchingColors(s),h=classes.length,r=Math.min(m,h),withCenter=$('show-center').checked,assigned=matchingColor%h<r,points=circlePositions(s,withCenter?195:250,165,withCenter?108:122),svg=$('matching-svg');matchingColor%=h;svg.replaceChildren();
  const groups=new Map();classes.forEach((list,i)=>list.forEach(([a,b])=>groups.set(edge(a,b),i)));
  for(let a=0;a<s;a++)for(let b=a+1;b<s;b++){const c=groups.get(edge(a,b));svg.append(line(points,a,b,{stroke:c===matchingColor?colors[c]:'#d9ded4','stroke-width':c===matchingColor?5:1.3}));}
+ if(withCenter&&assigned){
+  const center=[445,165],all=[...points,center],selected=classes[matchingColor];
+  for(let a=0;a<s;a++)svg.append(line(all,a,s,{stroke:'#d9ded4','stroke-width':1}));
+  for(const[a,b]of selected){svg.append(el('polygon',{points:[points[a],points[b],center].map(p=>p.join(',')).join(' '),fill:colors[matchingColor],'fill-opacity':.055,stroke:colors[matchingColor],'stroke-width':2.5}));}
+  svg.append(el('circle',{cx:445,cy:165,r:22,fill:colors[matchingColor],stroke:'#fffcf7','stroke-width':2}),label(445,165,'x'+(matchingColor+1),{'font-size':16,style:'fill:white'}));
+  svg.append(label(445,206,'CENTER',{'font-size':10}));
+ }
  points.forEach(([x,y],i)=>{svg.append(el('circle',{cx:x,cy:y,r:18,fill:'#193e3b',stroke:'#fffcf7','stroke-width':2}),label(x,y,i,{'font-size':13,style:'fill:white'}));});
- svg.append(label(250,332,`Color ${matchingColor+1}: ${classes[matchingColor].map(e=>e.join('–')).join(', ')}`,{'font-size':12}));
+ svg.append(label(250,332,`Color ${matchingColor+1}: ${classes[matchingColor].map(e=>e.join('–')).join(', ')}${withCenter&&!assigned?' · no center assigned':''}`,{'font-size':12}));
  $('color-buttons').replaceChildren();classes.forEach((_,i)=>{const b=document.createElement('button');b.textContent=i+1;b.setAttribute('aria-label',`Show matching color ${i+1}`);b.setAttribute('aria-pressed',String(i===matchingColor));b.style.borderColor=colors[i];b.addEventListener('click',()=>{matchingColor=i;drawMatching();});$('color-buttons').append(b);});
  $('s-size-value').textContent=s;$('copies-value').textContent=m;
  $('matching-formula').innerHTML=`h(${s}) = ${h}<br>${r} colors × ${Math.floor(s/2)} edges = <strong>${r*Math.floor(s/2)} triangles</strong>`;
  $('matching-explanation').textContent=`Each color is a matching of ${Math.floor(s/2)} edges. With ${m} available twin${m===1?'':'s'}, assign ${r} color${r===1?'':'s'} to ${r} distinct center${r===1?'':'s'}.${m>h?' The extra twins are unnecessary for this construction.':''} This counts constructed triangles using outside centers; triangles entirely inside the core may add more.`;
 }
-for(const id of ['s-size','copies'])$(id).addEventListener('input',drawMatching);
+for(const id of ['s-size','copies','show-center'])$(id).addEventListener('input',drawMatching);
 let sumColor=0;const classes=sumClasses();
 function drawSum(){const svg=$('sum-svg'),points=circlePositions(6,250,165,117);svg.replaceChildren();
  for(let a=0;a<6;a++)for(let b=a+1;b<6;b++)svg.append(line(points,a,b,{stroke:'#d7dfd3','stroke-width':1}));
- classes[sumColor].forEach((t,i)=>{svg.append(el('polygon',{points:t.map(v=>points[v].join(',')).join(' '),fill:colors[i],'fill-opacity':.1,stroke:colors[i],'stroke-width':3}));});
+ classes[sumColor].forEach((t,i)=>{svg.append(el('polygon',{points:t.map(v=>points[v].join(',')).join(' '),fill:colors[sumColor],'fill-opacity':.07,stroke:colors[sumColor],'stroke-width':3}));});
  points.forEach(([x,y],i)=>{svg.append(el('circle',{cx:x,cy:y,r:17,fill:'#193e3b',stroke:'#fffcf7','stroke-width':2}),label(x,y,i,{'font-size':13,style:'fill:white'}));});
  $('sum-caption').textContent=`Sum ${sumColor} modulo 6: ${classes[sumColor].length} edge-disjoint triangles — ${classes[sumColor].map(t=>'{'+t.join(', ')+'}').join(', ')}.`;
  for(const b of $('sum-buttons').children)b.setAttribute('aria-pressed',String(+b.dataset.sum===sumColor));
