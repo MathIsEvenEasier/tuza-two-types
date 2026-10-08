@@ -64,7 +64,7 @@ def main(config_path):
         for name, expected in manifest['files'].items():
             require(sha(SOURCE / name) == expected, 'Input member hash mismatch')
         # Bound this development session independently of the local controller.
-        runtime_cap_minutes = 115
+        runtime_cap_minutes = 175
         seconds = min(runtime_cap_minutes * 60,
                       int((parse_time(config['deadline']) - utcnow()).total_seconds()) - 300)
         require(seconds >= 120, 'Insufficient time before external deletion deadline')
@@ -72,13 +72,22 @@ def main(config_path):
         # Bound the whole tool install/build/check process, including descendants.
         with log_path.open('ab') as log:
             process = subprocess.Popen(['systemd-run', '--unit=mathiseasy-worker', '--wait', '--pipe',
-                '--property=MemoryMax=24G', '--property=MemorySwapMax=0', '--property=TasksMax=512',
+                '--property=MemoryMax=48G', '--property=MemorySwapMax=0', '--property=TasksMax=512',
                 '--property=OOMPolicy=kill', '--property=KillMode=control-group',
                 '--property=TimeoutStopSec=15s', f'--property=RuntimeMaxSec={seconds}s',
                 '--property=LimitCORE=0', '/bin/bash', str(SOURCE / profile['runner'])],
                 stdout=log, stderr=subprocess.STDOUT)
             while process.poll() is None:
                 heartbeat = dict(result, checked_at=stamp(), log_bytes=log_path.stat().st_size)
+                # Publish bounded, non-sensitive source-build progress, not proof success.
+                for record_path in Path('/home/proofci').glob('tuza-two-types-*/_work/tuza-two-types/tuza-two-types/ci-output/rebuild-record.json'):
+                    try:
+                        rows = json.loads(record_path.read_text())
+                        if isinstance(rows, list) and rows:
+                            heartbeat['project_modules_checked'] = len(rows)
+                            heartbeat['last_module'] = rows[-1]['module']
+                    except (OSError, ValueError, KeyError):
+                        pass  # The worker may be replacing its progress record.
                 try:
                     put(config['heartbeat_url'], json.dumps(heartbeat).encode())
                 except AuditError:

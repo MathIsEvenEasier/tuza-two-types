@@ -19,7 +19,7 @@ if not ssl.get_default_verify_paths().cafile and Path('/etc/ssl/cert.pem').is_fi
 
 SUBSCRIPTION = os.environ.get('AZURE_SUBSCRIPTION_ID', '')
 REGION = 'eastus'
-VM_SIZE = 'Standard_E4as_v7'
+VM_SIZE = 'Standard_E8as_v7'
 IMAGE = 'Canonical:ubuntu-24_04-lts:server:24.04.202608270'
 PINS = {'lean': '4.34.0', 'mathlib': '5ed2965256430c3649e86755f9576b54eca72435'}
 SOURCES = {}
@@ -92,7 +92,7 @@ def validate_state(state):
     require(state.get('names') == names(state['job_id']), 'Resource names do not match job ID')
     require(state.get('region') == REGION and state.get('vm_size') == VM_SIZE, 'Unexpected VM configuration')
     require(state.get('pins') == PINS, 'Changed toolchain pins')
-    require(state.get('minutes') == 125, 'Unexpected deadline interval')
+    require(state.get('minutes') == 185, 'Unexpected deadline interval')
     require(all(state['files'].get(k) == v for k, v in SOURCES.items()), 'Changed audited sources')
 
 

@@ -27,7 +27,7 @@ summary=[]
 for reg,folder in folders:
     start=time.monotonic()
     print('Starting ephemeral runner: '+reg['repository'],flush=True)
-    r=subprocess.run(['runuser','-u','proofci','--','./run.sh'],cwd=folder,timeout=6600)
+    r=subprocess.run(['runuser','-u','proofci','--','./run.sh'],cwd=folder,timeout=10200)
     summary.append({'repository':reg['repository'],'exit_code':r.returncode,'seconds':round(time.monotonic()-start,2)})
     (root/'ci-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     if r.returncode: raise RuntimeError('Runner exited unsuccessfully')

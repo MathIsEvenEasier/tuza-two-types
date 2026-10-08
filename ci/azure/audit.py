@@ -130,7 +130,7 @@ def prepare(base, job_kind='tuza_two_types_lean'):
     write_json(private,registrations)
     files['registration.json']=private
     state = {'schema': 1, 'job_id': job_id, 'subscription': SUBSCRIPTION, 'region': REGION,
-        'vm_size': VM_SIZE, 'image': IMAGE, 'minutes': 125, 'pins': PINS, 'names': names(job_id),
+        'vm_size': VM_SIZE, 'image': IMAGE, 'minutes': 185, 'pins': PINS, 'names': names(job_id),
         'job_kind': job_kind, 'files': {k: sha(v) for k, v in files.items()},
         'controller_sha256': {name: sha(HERE / name) for name in CODE_FILES},
         'phase': 'prepared', 'created_at': stamp(), 'compute_attempted': False}
@@ -147,11 +147,11 @@ def prepare(base, job_kind='tuza_two_types_lean'):
     write_json(directory / 'plan.json', {
         'job_id': job_id, 'job_kind': job_kind, 'subscription': SUBSCRIPTION,
         'region': REGION, 'vm_size': VM_SIZE,
-        'image': IMAGE, 'groups': state['names'], 'minutes_from_start_of_cloud_setup': 125,
-        'worker_memory_gib': 24, 'worker_runtime_minutes': 115, 'os_disk_gib': 64, 'inbound_network': 'deny all',
+        'image': IMAGE, 'groups': state['names'], 'minutes_from_start_of_cloud_setup': 185,
+        'worker_memory_gib': 48, 'worker_runtime_minutes': 175, 'os_disk_gib': 64, 'inbound_network': 'deny all',
         'guard': 'one-shot Logic App with Contributor on this job compute RG only',
-        'compute_rate_usd_per_hour_observed_2026_09_11': 0.238,
-        'compute_125_minutes_usd': 0.496,
+        'compute_rate_usd_per_hour_observed_2026_09_11': 0.476,
+        'compute_185_minutes_usd': 1.468,
         'additional_costs': ['OS disk', 'public IPv4', 'Storage', 'Logic App actions', 'transfer'],
         'deadline_is_deletion_request_not_billing_cap': True,
         'recovery_storage_retained_until_download_or_explicit_discard': True,
@@ -165,7 +165,7 @@ def quota_check(usages):
     for name in ('cores', 'StandardEasv7Family'):
         rows = [r for r in usages if r['name']['value'].lower() == name.lower()]
         require(len(rows) == 1, 'Quota missing: ' + name)
-        require(int(rows[0]['limit']) - int(rows[0]['currentValue']) >= 4, 'Insufficient quota: ' + name)
+        require(int(rows[0]['limit']) - int(rows[0]['currentValue']) >= 8, 'Insufficient quota: ' + name)
 
 
 def retail_price():
@@ -184,8 +184,8 @@ def retail_price():
                          for word in ('windows', 'spot', 'low priority', 'cloudservices'))]
     require(len(items) == 1 and items[0]['unitOfMeasure'] == '1 Hour', 'Ambiguous VM price')
     rate = float(items[0]['retailPrice'])
-    require(0 < rate <= 0.25, 'VM retail price exceeds 0.25 USD/h; review before running')
-    return {'source': url, 'hourly_usd': rate, 'compute_125_minutes_usd': rate * 125/60,
+    require(0 < rate <= 0.50, 'VM retail price exceeds 0.50 USD/h; review before running')
+    return {'source': url, 'hourly_usd': rate, 'compute_185_minutes_usd': rate * 185/60,
             'excludes': ['disk', 'IPv4', 'Storage', 'Logic Apps', 'transfer', 'taxes']}
 
 

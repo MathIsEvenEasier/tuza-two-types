@@ -110,7 +110,7 @@ as necessary build inputs. A changed, missing or extra source is rejected.
 All compilation must run on Azure. The included ``ci/azure/audit.py``
 controller provisions a repository-scoped ephemeral runner, installs an
 independent cloud deletion guard before compute starts, limits the worker
-to 24 GiB without swap and 115 minutes, and sets a 125-minute cloud deadline.
+to 48 GiB without swap and 175 minutes, and sets a 185-minute cloud deadline.
 It requires Azure CLI, GitHub CLI authorized for this repository, and
 ``AZURE_SUBSCRIPTION_ID``. From a control machine::
 

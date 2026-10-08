@@ -16,7 +16,7 @@ jobs:
   verify:
     if: github.ref == 'refs/heads/main'
     runs-on: [self-hosted, linux, x64, "${{ inputs.runner_label }}"]
-    timeout-minutes: 110
+    timeout-minutes: 170
     steps:
       - name: Check out the dispatched commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

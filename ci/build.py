@@ -14,7 +14,7 @@ if not pathlib.Path('/run/mathiseasy-azure-verified').is_file():
     raise SystemExit('A verified Azure worker with independent deletion guard is required')
 cgroup=next(x.split(':',2)[2] for x in pathlib.Path('/proc/self/cgroup').read_text().splitlines() if x.startswith('0:'))
 cap=(pathlib.Path('/sys/fs/cgroup')/cgroup.lstrip('/')/'memory.max').read_text().strip()
-if cap=='max' or int(cap)>24*1024**3: raise SystemExit('Whole-job memory limit must be at most 24 GiB')
+if cap=='max' or int(cap)>48*1024**3: raise SystemExit('Whole-job memory limit must be at most 48 GiB')
 commit=run(['git','rev-parse','HEAD'],capture=True).strip()
 if commit!=os.environ['GITHUB_SHA']: raise SystemExit('Checkout does not match the workflow commit')
 if run(['git','status','--porcelain'],capture=True).strip(): raise SystemExit('Checkout is not clean')
@@ -42,7 +42,7 @@ if not version.startswith('Lean (version 4.34.0,'): raise SystemExit('Wrong Lean
 imports=sorted(set(m for f in (root/'formal').glob('*.lean') for m in re.findall(r'^import (Mathlib\.[A-Za-z0-9_.]+)$',f.read_text(),re.M)))
 run(['lake','exe','cache','get']+[m.replace('.','/')+'.lean' for m in imports],work,timeout=900)
 try:
-    run(['python3','-u',str(root/'scripts/rebuild.py'),str(work)],work,timeout=6200)
+    run(['python3','-u',str(root/'scripts/rebuild.py'),str(work)],work,timeout=9600)
     report=json.loads((out/'rebuild-report.json').read_text())
     if report['status']!='VERIFIED' or report['modules']!=3190 or not report['negative_control_rejected']:
         raise RuntimeError('Incomplete source build')
@@ -56,6 +56,10 @@ finally:
     if os.environ.get('GITHUB_STEP_SUMMARY'):
         with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
             f.write('## Lean verification: '+provenance['status']+'\n\nCommit: `'+commit+'`\n\n')
-            f.write('Lean 4.34.0; mathlib `'+pin+'`. All 3,190 project modules rebuilt from source.\n\n')
-            if provenance['status']=='VERIFIED':f.write('Final theorem: `'+report['theorem']+'`\n\nAxioms: `'+', '.join(report['axioms'])+'`.\n')
+            f.write('Lean 4.34.0; mathlib `'+pin+'`.\n\n')
+            if provenance['status']=='VERIFIED':
+                f.write('All 3,190 project modules rebuilt from source.\n\n')
+                f.write('Final theorem: `'+report['theorem']+'`\n\nAxioms: `'+', '.join(report['axioms'])+'`.\n')
+            else:
+                f.write('The source rebuild did not complete. See the preserved compiler records.\n')
     print('Build status: '+provenance['status'],flush=True)
