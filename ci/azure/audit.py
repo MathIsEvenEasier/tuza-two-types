@@ -212,7 +212,7 @@ def preflight(cloud, register=False):
     rows = [r for r in skus if r.get('name') == VM_SIZE and r.get('resourceType') == 'virtualMachines']
     require(len(rows) == 1 and not rows[0].get('restrictions'), 'VM SKU restricted or not found')
     caps = {c['name']: c['value'] for c in rows[0]['capabilities']}
-    require(int(caps['vCPUs']) == 4 and float(caps['MemoryGB']) >= 32, 'Unexpected SKU resources')
+    require(int(caps['vCPUs']) == 8 and float(caps['MemoryGB']) >= 64, 'Unexpected SKU resources')
     require(caps.get('CpuArchitectureType') == 'x64' and 'V2' in caps.get('HyperVGenerations', ''), 'Wrong VM architecture')
     image = cloud.az('vm', 'image', 'show', '--location', REGION, '--urn', IMAGE)
     features = {f['name']: f['value'] for f in image.get('features', [])}
