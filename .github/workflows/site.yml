@@ -1,0 +1,17 @@
+name: Interactive examples
+on:
+  push:
+    paths: ['docs/**', 'scripts/check-site.mjs', '.github/workflows/site.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  examples:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check every displayed graph and the illustrated lemmas
+        run: node --max-old-space-size=128 scripts/check-site.mjs

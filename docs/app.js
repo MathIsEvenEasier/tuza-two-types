@@ -17,11 +17,13 @@ function updateGraph(){
 }
 function drawGraph(){
  const canvas=$('graph-drawing');canvas.replaceChildren();
- const core=circlePositions(6,360,224,133),points=[...core];
- for(let i=0;i<g.p;i++)points.push([70,224+(i-(g.p-1)/2)*88]);
- for(let i=0;i<g.q;i++)points.push([650,224+(i-(g.q-1)/2)*88]);
- canvas.append(el('ellipse',{cx:360,cy:224,rx:172,ry:171,fill:'#edf1e7',stroke:'#cdd5c9','stroke-dasharray':'4 5'}));
- canvas.append(label(360,23,'CLIQUE K',{'font-size':11,'letter-spacing':2}),label(70,23,'TYPE S',{'font-size':11,'letter-spacing':2}),label(650,23,'TYPE T',{'font-size':11,'letter-spacing':2}));
+ const mobile=matchMedia('(max-width:740px)').matches,cx=mobile?180:360,cy=mobile?190:224;
+ $('graph').setAttribute('viewBox',mobile?'0 0 360 380':'0 0 720 460');
+ const core=circlePositions(6,cx,cy,mobile?101:133),points=[...core];
+ for(let i=0;i<g.p;i++)points.push([mobile?23:70,cy+(i-(g.p-1)/2)*(mobile?75:88)]);
+ for(let i=0;i<g.q;i++)points.push([mobile?337:650,cy+(i-(g.q-1)/2)*(mobile?75:88)]);
+ canvas.append(el('ellipse',{cx,cy,rx:mobile?128:172,ry:mobile?140:171,fill:'#edf1e7',stroke:'#cdd5c9','stroke-dasharray':'4 5'}));
+ canvas.append(label(cx,23,'CLIQUE K',{'font-size':mobile?9:11,'letter-spacing':mobile?0:2}),label(mobile?28:70,23,'TYPE S',{'font-size':mobile?9:11,'letter-spacing':mobile?0:2}),label(mobile?332:650,23,'TYPE T',{'font-size':mobile?9:11,'letter-spacing':mobile?0:2}));
  const edgeColor=new Map();P.forEach((t,i)=>triangleEdges(t).forEach(e=>edgeColor.set(e,i)));
  const sorted=[...g.edges].sort(([a,b],[c,d])=>Number(edgeColor.has(edge(a,b)))-Number(edgeColor.has(edge(c,d))));
  for(const[a,b]of sorted){const key=edge(a,b),index=edgeColor.get(key),hit=C.edges.has(key);if(mode==='cover'&&$('remove-cover').checked&&hit)continue;
@@ -83,3 +85,5 @@ for(let c=0;c<6;c++){const b=document.createElement('button');b.textContent='Σ 
 function drawRho(){const k=+$('large-k').value;if(!Number.isInteger(k)||k<43||k>1000000){$('large-k').setCustomValidity('Choose an integer from 43 to 1,000,000.');$('rho-text').textContent='Choose an integer from 43 to 1,000,000 for this display.';return;}$('large-k').setCustomValidity('');$('rho-dot').style.left=(4300/k)+'%';$('rho-text').textContent=`k = ${k.toLocaleString('en-US')} gives ρ = 1/${k.toLocaleString('en-US')} ≈ ${(1/k).toPrecision(5)}. This value is inside [0, 1/43]. The theorem itself has no upper bound on k.`;}
 $('large-k').addEventListener('input',drawRho);for(const b of document.querySelectorAll('[data-k]'))b.addEventListener('click',()=>{$('large-k').value=b.dataset.k;drawRho();});
 updateGraph();showProof('compression');drawMatching();drawSum();drawRho();
+
+matchMedia('(max-width:740px)').addEventListener('change',drawGraph);
