@@ -1,0 +1,9 @@
+{
+  "current_task_vms": [],
+  "group_exists": {
+    "mie-fa2b8345ae1d465f-compute": false,
+    "mie-fa2b8345ae1d465f-control": false
+  },
+  "remaining_resource_ids": [],
+  "all_deleted": true
+}

@@ -1,0 +1,3336 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=27mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\tp}{\nu_{\triangle}}
+\newcommand{\tc}{\tau_{\triangle}}
+\newcommand{\mc}{\operatorname{MaxCut}}
+\title{Two neighborhood types in Tuza's conjecture\\
+\large Direct covers, quantitative margins, and compatible packings}
+\author{Working research notes\\OpenAI Codex (GPT-6 Astra)}
+\date{8 October 2026}
+\begin{document}
+\maketitle
+
+\noindent\textbf{Status (8 October 2026).} Theorem~\ref{thm:two-types-all}
+is fully formalized and verified in Lean 4.34.0: every finite simple split
+graph with at most two active independent-side neighborhood types satisfies
+Tuza's inequality, with no restriction on clique size, overlap, or multiplicities.
+The final route uses matching allocations, explicit cut covers, greedy core
+completion via Mantel's bound, and sum-coloring of triangles.
+A finite certificate covers all $23\,848\,371$ required compressed parameter
+tuples for $2\leq k\leq42$. Analytic reductions and a continuous certificate
+with $178\,506$ leaves cover every $k\geq43$ simultaneously.
+The final graph theorem and the certificates, including their soundness and
+coverage proofs, are kernel-checked. Only the standard axioms
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound} occur.
+The final formal-verification section records the evidence.
+
+These are development notes: intermediate sections preserve earlier routes,
+stronger bounds, failed comparisons and historical verification checkpoints.
+Their partial-status comments describe those checkpoints, not the completed
+formalization. The final route does not use the exact clique-packing formula,
+a threshold-graph theorem, the exact cover formula, or permutation averaging.
+This proves the stated two-type subclass, not Tuza's conjecture for arbitrary
+graphs. No publication priority or independent expert review is claimed.
+
+\section{The graph class and notation}
+All graphs are finite, simple, and undirected. Let $G$ have a split partition
+$V(G)=C\mathbin{\dot\cup}I$, with $C$ a clique of size $k$ and $I$ independent.
+After deleting vertices of $I$ with degree at most one, assume that every
+remaining vertex has neighborhood $S$ or $T$ in $C$. Write $p,q$ for their
+multiplicities and
+\[
+ a=|S\setminus T|,\quad b=|T\setminus S|,\quad
+ u=|S\cap T|,\quad o=|C\setminus(S\cup T)|.
+\]
+Thus $k=a+b+u+o$, $s=|S|=a+u$, and $t=|T|=b+u$.
+The target is $\tc(G)\leq 2\tp(G)$ for all six parameters.
+Here $\tc$ is the minimum size of an edge set meeting every triangle, and
+$\tp$ is the maximum number of pairwise edge-disjoint triangles.
+
+Nested neighborhoods give threshold graphs, already covered by
+Bonamy et al.~\cite{bonamy}. The cases beyond that known result have $p,q>0$ and $a,b>0$.
+Zeng~\cite{zeng} treats two types with a specified eight-vertex clique part.
+The purpose here is to develop reductions with no bound on $k$.
+
+\section{The final proof route}
+Remove outside vertices that participate in no triangle, and compress each
+remaining multiplicity with Theorem~\ref{thm:compression}. The final
+proof has only the following branches:
+\[
+ \begin{array}{ccl}
+ k\leq1&:&\text{there are no triangles},\\
+ 2\leq k\leq42&:&\text{the sum-coloring finite certificate},\\
+ k\geq43&:&\text{analytic reductions and the unchanged continuous certificate}.
+ \end{array}
+\]
+Lemma~\ref{lem:cyclic-reductions} handles one-type graphs, a small
+neighborhood, small total multiplicity, and two neighborhoods no larger
+than half the clique. Every remaining large-core graph lies in the
+domain of Lemma~\ref{lem:cyclic-interval}.
+
+The certificates compare explicit covers (balanced cuts, shadow cuts,
+and the unbalanced common cut) with packing lower bounds from local
+matching colors, greedy core completion, and sum-coloring of triangles.
+Their comparison gives $\tc\leq2\tp$. The matching decomposition,
+Mantel bound, cut rounding, and sum-coloring arguments are given in the notes.
+
+The exact clique-packing formula, threshold-graph theorem, exact cover
+formula, permutation averaging, extremal theorem for two holes, moment calculations, stability
+and lifting arguments, multiplicity balancing, and separate equal-size
+theorem are not dependencies of this final route. They remain in the
+notes as background or earlier research. The elementary cyclic bound is
+weaker than the exact clique optimum; its use is justified by new
+analytic constants and fresh certificates, not by reusing earlier
+numerical conclusions. The subsequent sum-coloring simplification leaves
+the continuous bounds unchanged and has its own new finite check.
+
+\section{A sharp linear bound on twin multiplicities}
+The next result applies to a more general graph. Let $H$ be any finite
+simple graph and let $S\subseteq V(H)$ have size $s\geq2$. Form $G_m$ by
+adding $m$ independent vertices, each with neighborhood exactly $S$.
+The set $S$ need not be a clique.
+Define
+\[
+ h(s)=\chi'(K_s)=
+ \begin{cases}s-1,&s\text{ even},\\s,&s\text{ odd}.\end{cases}
+\]
+For completeness, the required round-robin decomposition is explicit.
+If $s$ is even, label the vertices by $\{\infty\}\cup\mathbb Z/(s-1)\mathbb Z$.
+For each residue $c$, take the matching
+\[
+ \{\{\infty,c\}\}\ \cup\
+ \{\{c+i,c-i\}:1\leq i\leq(s-2)/2\}.
+\]
+It is perfect: the nonzero residues modulo the odd number $s-1$ occur
+exactly once in pairs $\{i,-i\}$. Every edge not incident with $\infty$
+belongs to exactly one matching, because its endpoints $a,b$ determine
+$c=(a+b)/2$ modulo $s-1$; division by $2$ is valid for an odd modulus.
+Edges incident with $\infty$ have their evident unique color. This also
+covers $s=2$, when the second set is empty. For odd $s$, use this
+construction on $s+1$ vertices and delete one vertex. The resulting
+$s$ matchings each have $(s-1)/2$ edges. Thus every color class has
+$\lfloor s/2\rfloor$ edges. The degree lower bound for even $s$, and
+edge counting with at most $\lfloor s/2\rfloor$ edges per color for odd
+$s$, also prove that the displayed number of colors is minimal.
+
+There is a shorter route to the class-size property once properness is
+known. In any proper coloring of $K_s$ with $h(s)$ available colors, each
+class $M_c$ is a matching, so $|M_c|\leq\lfloor s/2\rfloor$. But
+\[
+ \sum_{c=1}^{h(s)}|M_c|=\binom{s}{2}
+ =h(s)\lfloor s/2\rfloor.
+\]
+Thus every class attains its upper bound. This counting argument avoids
+counting the individual residue classes. It is now verified in Lean for
+every proper coloring with this palette size, not just the particular
+round-robin construction. Consequently every set of $r$ colors contains
+exactly $r\lfloor s/2\rfloor$ edges.
+
+\begin{corollary}[Allocation on one clique neighborhood]\label{cor:one-neighborhood-allocation}
+Suppose $S$ is a clique in $H$, with $s=|S|\geq2$. For every $m\geq0$,
+the graph $G_m$ has an edge-disjoint triangle packing of exactly
+\[
+ \min(m,h(s))\lfloor s/2\rfloor
+\]
+triangles, each using one new vertex. In particular, this expression is
+a lower bound for $\tp(G_m)$.
+\end{corollary}
+\begin{proof}
+Put $r=\min(m,h(s))$ and choose any $r$ colors of a proper
+$h(s)$-coloring of $K_S$. Every chosen class has $\lfloor s/2\rfloor$
+edges. Assign the chosen colors to $r$ distinct new vertices and form a
+triangle over each selected edge with its assigned center. The old edges
+are distinct, triangles at one center use a matching, and triangles at
+different centers have distinct spokes. All their edges are present
+because $S$ is a clique. The count is $r\lfloor s/2\rfloor$, including
+the empty packing when $m=0$.
+\end{proof}
+This asserts the size of a constructed packing, not the optimum over all
+packings: triangles wholly inside $H$ can contribute additional members.
+The formula cannot simply be added for two overlapping neighborhoods,
+because their selected old edges may coincide.
+
+\paragraph{Lean verification of uniform classes and allocation.}
+The module \path{lean-matching-classes/MatchingClasses.lean} retains
+the previous graph-packing source verbatim and proves the counting
+argument above. Its theorem \texttt{uniform\_class\_size} applies to any
+proper coloring of all two-element subsets of a finite neighborhood.
+The theorem \texttt{selected\_edges\_card} proves the exact size for
+every selected palette, without an averaging step.
+
+The theorem \texttt{palette\_packing} assigns selected colors injectively
+to actual new centers. It proves adjacency, pairwise edge-disjointness,
+exact cardinality, and the presence of a new center in every produced
+triangle. The theorem \texttt{clique\_neighborhood\_packing} then handles
+every $m$, including $m=0$ and $m>h(s)$, in an arbitrary ambient vertex
+type. Its finite-graph corollary
+\texttt{clique\_neighborhood\_lower\_bound} compares that size to the
+actual attained graph optimum. Unlike multiplicity compression, this
+allocation theorem requires $S$ to be a clique.
+
+Azure job \texttt{d209d4a414c24fc2} verified the complete source on its
+first attempt in $72.224$ seconds, using Lean 4.34.0 and the pinned Mathlib
+revision. All seven final dependency audits use only \texttt{propext},
+\texttt{Classical.choice}, and \texttt{Quot.sound}; the arithmetic
+palette identity does not need \texttt{Classical.choice}. The false
+arithmetic control was rejected and the returned source matches the
+local source. The worker had a 16 GiB memory limit, a 25-minute runtime
+limit, and an independent cloud deletion guard. Cleanup evidence is
+recorded separately from proof success.
+
+\textbf{Assessment.} Uniform matching-class sizes and the entire
+single-neighborhood allocation bridge are now kernel-checked. The
+independent two-neighborhood allocation below now also has a verified
+compatibility construction and overlap estimate. The coupled-color lower
+bound below is now verified too, with coherent labels and finite cyclic
+averaging. Both constructions control shared edges before combining
+the two types.
+
+\begin{theorem}[Exact multiplicity compression]\label{thm:compression}
+For every $m\geq0$,
+\[
+ \tp(G_m)=\tp(G_{\min(m,h(s))}),\qquad
+ \tc(G_m)=\tc(G_{\min(m,s-1)}).
+\]
+Consequently truncating at $h(s)$ preserves both parameters simultaneously.
+\end{theorem}
+\begin{proof}
+Both parameters are nondecreasing under addition of vertices, so it suffices
+to prove the reverse inequalities above their proposed thresholds.
+
+Take any triangle packing in $G_m$. Every triangle using a new vertex uses
+one edge of $H[S]$. Collect these edges into a graph $J\subseteq H[S]$.
+They are all distinct. Restrict a fixed $h(s)$-edge-coloring of $K_S$ to $J$.
+Replace the center of each such triangle by the new vertex indexed by the
+color of its clique edge. Triangles assigned to the same center use a matching,
+so their spokes are distinct. Triangles assigned to different centers have
+different spokes, and their clique edges are distinct. All triangles lying
+inside $H$ are left unchanged; they use none of these clique edges and no
+new spokes. Thus the packing survives on $h(s)$ new vertices with the same
+cardinality.
+
+For covers, let $r=s-1$ and take any triangle cover $F$ of $G_r$.
+Put $F_H=F\cap E(H)$ and let $J$ consist of the edges of $H[S]$ not in $F_H$.
+For every new vertex $x$, the set $Z_x=\{v\in S:xv\in F\}$ is a vertex cover
+of $J$: the triangle formed by $x$ and an edge of $J$ must be met by a
+selected spoke. Choose $x_*$ minimizing $|Z_x|$. Every edge of $J$ is
+incident to $Z_{x_*}$, and each vertex of $S$ has at most $s-1$ neighbors
+in $S$. Consequently
+\[
+ |E(J)|\leq (s-1)|Z_{x_*}|
+ \leq \sum_{x=1}^{r}|Z_x|.
+\]
+The sum counts distinct selected spokes. Replace them all by $E(J)$.
+The resulting set $F_H\cup E(J)$ has size at most $|F|$, still covers every
+triangle in $H$, and contains every edge of $H[S]$. It therefore covers the
+triangles centered at arbitrarily many new vertices. This directly
+transforms every cover, without introducing a separate vertex-cover optimum.
+\end{proof}
+
+\paragraph{A reusable recoloring statement.}
+The packing part has a useful formulation that separates its construction
+from the extraction of data from a graph. Let $S$ be an $s$-element subset
+of an arbitrary old vertex set $V$, with $s\geq2$. Let $Q$ be an
+edge-disjoint family of triples in $V$, and let $J\subseteq\binom S2$.
+Assume no member of $J$ is an edge of a member of $Q$. A proper
+$h(s)$-edge-coloring $c$ gives the explicit new family
+\[
+ P=Q\ \cup\ \{e\cup\{x_{c(e)}\}:e\in J\},
+\]
+where the $h(s)$ vertices $x_i$ are new and distinct. Then $P$ is
+edge-disjoint and $|P|=|Q|+|J|$. All members of $Q$ are retained.
+Indeed, two new triangles can share a spoke only if their core edges
+meet and have the same color, which properness excludes for distinct
+edges. A new triangle can share an edge with an old one only on its
+core edge, excluded by the assumption on $J$. Every triangle is distinct,
+so the cardinalities add. This formulation permits the triangles of the
+second neighborhood type to remain in $Q$ while the first type is
+recolored; it places no bound on $V$, $Q$, or the original multiplicity.
+
+\paragraph{Lean verification of the recoloring construction.}
+The module \path{lean-compression/Compression.lean} proves the proper
+coloring bound for every finite size $s\geq2$, then proves the preceding
+recoloring statement for actual triples in the disjoint union
+$V\sqcup\operatorname{Fin}(h(s))$. The final theorem is
+\texttt{recolor\_on\_neighborhood}. It includes the exact cardinality,
+pairwise disjointness of two-element edge sets, retention of every old
+triple, and a centered triangle over every selected core edge. No bound
+on the ambient vertex set is assumed. The proof handles an arbitrary
+finite neighborhood inside that ambient set, not just an isolated clique.
+
+Azure job \texttt{8afa912918af43f0} compiled the complete module with Lean
+4.34.0 and the pinned Mathlib revision in $68.471$ seconds. All four
+audited results use only \texttt{propext}, \texttt{Classical.choice}, and
+\texttt{Quot.sound}; the false arithmetic control was rejected. A prior
+initial module passed separately; the first extended attempt failed on
+two elaboration errors and is retained as a failure. Memory and time
+limits and independent cloud cleanup were used; actual deletion status
+is recorded separately in the run reports.
+
+This module verifies the constructive packing component of
+Theorem~\ref{thm:compression}. Its graph-level packing equality is now
+verified by the companion module described below. A further module
+verifies cover compression at $s-1$ centers and simultaneous preservation
+of both parameters. Uniform matching-class sizes and single-neighborhood
+allocation are now verified by the module described above. No scalar expression or numerical certificate
+domain changed in these formalization steps.
+
+\paragraph{Extracting the data from an arbitrary graph packing.}
+Let $P$ be a triangle packing in $G_m$. Each triangle has at most one new
+vertex, since the new vertices are independent. Its old part therefore
+has at least two vertices. The old-part map is injective on $P$: equal
+old parts would contain a shared two-element edge. Split $P$ into old
+triangles and triangles using one new vertex. Their old parts give an
+old packing $Q$ and a family $J\subseteq E(H)\cap\binom S2$, respectively,
+with $|P|=|Q|+|J|$. No edge in $J$ lies in a triangle of $Q$, again by
+edge-disjointness of $P$. Thus the hypotheses of the recoloring
+construction follow from the input packing itself.
+
+Every produced triple is a triangle of the target graph: its old edge
+belongs to $H$, and both endpoints lie in $S$, so both new spokes are
+present. When $m\geq h(s)$, the reverse map simply embeds the $h(s)$ new
+vertices into the $m$ new vertices. Thus every attainable packing size
+is preserved in both directions, and so is the maximum. When $m\leq h(s)$,
+the truncated graph is unchanged. This packing argument works even if
+$S$ is not a clique: only the actually selected edges of $H$ are used,
+while the complete-graph coloring supplies a convenient common palette.
+
+\paragraph{Lean verification of exact packing compression.}
+The companion \path{lean-graph-compression/GraphCompression.lean}
+formalizes the whole graph bridge. It defines $G_m$ as a Mathlib
+\texttt{SimpleGraph}, proves that the extracted data satisfy every
+recoloring hypothesis, and checks graph adjacency of the output triples.
+An injective graph map gives the reverse direction. Its theorem
+\texttt{packing\_sizes\_attached\_min} proves equivalence of every
+attainable finite packing size, including when the old vertex type is
+infinite. For finite old vertex types,
+\texttt{packingNumber\_spec} proves that the finite supremum defining the
+packing number is attained and bounds every packing. The final theorem
+\texttt{packingNumber\_attached\_min} therefore states the exact equality
+\[
+ \tp(G_m)=\tp(G_{\min(m,h(s))})
+ \qquad(s\geq2,\ m\geq0).
+\]
+It assumes neither that $S$ is a clique nor a bound on $m$ or the size
+of the old graph. This is a general compression lemma; the full
+Tuza inequality remains a separate target.
+
+Azure job \texttt{b1553d10589540b3} verified the combined source with Lean
+4.34.0 and the same pinned Mathlib revision in $71.784$ seconds. All six
+audited graph-level results depend only on \texttt{propext},
+\texttt{Classical.choice}, and \texttt{Quot.sound}. The false arithmetic
+control was rejected and the returned source is byte-identical to the
+local source. The first attempt failed on elaboration errors and is
+retained as a failure; a local preparation superseded before launch
+created no cloud resources. Every actual job had bounded memory and time
+and an independent cloud deletion guard; deletion evidence is recorded
+separately from proof success.
+
+\paragraph{Lean verification of exact cover compression.}
+The module \path{lean-cover-compression/CoverCompression.lean} retains
+the preceding graph-packing source verbatim and adds the cover proof.
+Its definition \texttt{IsCover} requires every selected pair to be an
+actual graph edge and every triangle to contain a selected edge.
+The lemma \texttt{replace\_spokes} implements the minimum-selected-spoke
+argument above. The old-edge cover it produces contains every edge of
+$H[S]$, so it extends to any number of new centers at no extra cost.
+Restriction along an injective graph map supplies the converse direction.
+
+The definition \texttt{coverNumber} is the least feasible edge budget;
+\texttt{coverNumber\_spec} proves that this value is attained and is no
+greater than the size of any valid cover. The theorem
+\texttt{coverNumber\_attached\_min} therefore proves the exact equality
+of triangle-cover optima at the threshold $s-1$. The final theorem
+\texttt{both\_parameters\_attached\_min} combines both halves of
+Theorem~\ref{thm:compression} at the common threshold $h(s)$.
+The result quantifies over every finite old graph, every neighborhood
+of size at least two, and every multiplicity.
+
+Azure job \texttt{8e4f6877a2034648} verified the complete combined source
+with Lean 4.34.0 and the same pinned Mathlib revision in $66.321$ seconds.
+All eight cover-stage dependency audits contain only \texttt{propext},
+\texttt{Classical.choice}, and \texttt{Quot.sound}; the false arithmetic
+control was rejected. Local and returned source hashes agree. The first
+attempt failed on one ambiguous lemma name and remains recorded as a
+failure. Both attempts used bounded memory and time and an independent
+cloud deletion guard; cleanup evidence is recorded separately.
+
+\textbf{Assessment.} Both optimization equalities and their common-cap
+corollary are now formalized for the actual graphs. This closes the
+universal multiplicity lemma, not merely another finite range of cases.
+Uniform matching-class sizes and the single-neighborhood allocation
+are also now verified. The independent two-type allocation and its
+overlap estimate are now verified too, as is the coupled-color lower bound.
+The full
+two-type Tuza theorem and its numerical certificates are not yet fully
+formalized; translating the full split-graph representation and handling
+inactive vertices also remain obligations.
+
+\paragraph{Sharpness.}
+For packing, take $H=K_s$. Every triangle consumes at least one clique edge,
+so $\tp\leq\binom{s}{2}$. Equality forces every packed triangle to be centered
+at a new vertex: a clique triangle would consume three clique edges.
+Such an equality packing is precisely a proper edge coloring of $K_s$ by
+its centers. It exists at $m=h(s)$ and cannot exist at $m=h(s)-1$.
+For covers, at $m=s-1$ the replacement argument gives $\tc=\binom{s}{2}$,
+whereas at $m=s-2$ one may leave a star in the clique and remove the spoke
+from its center to each new vertex, using $\binom{s}{2}-1$ edges.
+
+\begin{corollary}
+Every two-type instance has an equivalent instance for both $\tc$ and $\tp$
+with at most $k+h(s)+h(t)\leq3k$ vertices. It suffices to truncate the two
+types successively. Inactive types can be deleted altogether.
+\end{corollary}
+This does not bound $k$. It reduces multiplicities uniformly, rather than
+verifying the conjecture for an additional finite clique size.
+
+\section{An extremal lemma for two forbidden cliques}
+For subsets $P,Q$ of a $k$-element set $C$, define
+\[
+ R(P,Q)=K_C-\big(E(K_P)\cup E(K_Q)\big).
+\]
+For a graph $R$, let $\operatorname{ex}_{\triangle}(R)$ be the maximum number
+of edges in a spanning triangle-free subgraph of $R$.
+
+\begin{lemma}\label{lem:twoholes}
+For every $P,Q\subseteq C$,
+\[
+ \operatorname{ex}_{\triangle}(R(P,Q))=\mc(R(P,Q)).
+\]
+\end{lemma}
+\begin{proof}
+Partition $C$ into $A=P\setminus Q$, $B=Q\setminus P$, $D=P\cap Q$,
+and $W=C\setminus(P\cup Q)$. In $R(P,Q)$, the sets $A,B,D$ are independent,
+the pair $A,B$ is complete, $D$ has no neighbors in $A\cup B$, and $W$ is
+a clique complete to all other vertices.
+
+Take a triangle-free spanning subgraph $F$ with the maximum number of edges.
+Within $A$, clone a vertex of maximum $F$-degree onto every other vertex of
+$A$: give all of them its neighborhood. This is allowed by the host graph,
+creates no triangle, and does not decrease the edge count. Perform the same
+operation in $B$ and then $D$. Previously obtained twin classes remain twin
+classes. Thus each of $A,B,D$ is homogeneous in $F$.
+
+Next consider equivalence classes in $W$ under equality of open
+$F$-neighborhoods. If two different classes have nonadjacent representatives
+$v,w$, then $d_F(v)=d_F(w)$: otherwise cloning the lower-degree vertex onto
+the higher-degree vertex would increase the edge count. Replace every
+vertex in the class of $w$ by a clone of $v$. The two classes have no edges
+between them, so the edge count is unchanged. No triangle is created and
+no existing twin class is split, while these two classes merge. This also
+preserves homogeneity of $A,B,D$. Repetition terminates with every two
+distinct classes in $W$ adjacent. Since $F$ is triangle-free, there are
+at most two such classes, say $W_0,W_1$.
+
+The resulting graph is a blow-up of a triangle-free graph on at most five
+vertices $A,B,D,W_0,W_1$ (empty classes are omitted). If there are five
+nonempty classes, $W_0W_1$ is an edge, and $D$ can be adjacent only to
+$W_0,W_1$. It cannot be adjacent to both, because that would make a triangle.
+Thus $D$ has degree at most one in the quotient. The quotient has no odd
+cycle: a triangle is excluded, and a five-cycle would have to pass through
+$D$. It is therefore bipartite, as is its blow-up $F$.
+
+The edge count of a bipartite subgraph is at most a maximum cut of the host.
+Conversely every cut is a triangle-free subgraph. This proves equality.
+\end{proof}
+
+\section{An exact formula for the cover number}
+Write $e_0=\binom{k}{2}$. The exact split-graph cover reduction of
+Zeng~\cite{zeng}, or simply choosing the surviving neighborhood of each
+independent-side vertex, gives
+\begin{align}
+ |E(G)|-\tc(G)
+  &=\max_{\substack{L\subseteq K_C\\L\text{ triangle-free}}}
+       \bigl(|E(L)|+p\alpha(L[S])+q\alpha(L[T])\bigr)\label{eq:oldcover}\\
+  &=\max_{\substack{P\subseteq S\\Q\subseteq T}}
+       \bigl(p|P|+q|Q|+\operatorname{ex}_{\triangle}(R(P,Q))\bigr).
+       \label{eq:reorder}
+\end{align}
+Indeed, retained neighbors of any independent-side vertex must form an
+independent set in $L$. For a fixed $L$, all copies of a type can choose the
+same maximum independent set. Conversely, fixing $P,Q$ only forbids clique
+edges internal to $P$ or $Q$; the remaining core must be triangle-free.
+Lemma~\ref{lem:twoholes} replaces the last extremal problem by a maximum cut.
+
+For nonnegative $\alpha,\beta,\gamma$ with sum at most $k$, set
+$w=k-\alpha-\beta-\gamma$ and define
+\begin{align}
+ M_k(\alpha,\beta,\gamma)=
+ \max_{\substack{\varepsilon_A,\varepsilon_B,\varepsilon_D\in\{0,1\}\\
+                  z\in\{0,\ldots,w\}}}
+ \bigl[&\alpha\beta\,\mathbf1_{\varepsilon_A\ne\varepsilon_B}
+       +z(w-z)\nonumber\\
+       &+d(w-z)+(\alpha+\beta+\gamma-d)z\bigr],\label{eq:M}\\
+ d&=\varepsilon_A\alpha+\varepsilon_B\beta+\varepsilon_D\gamma.\nonumber
+\end{align}
+This is exactly $\mc(R(P,Q))$ when
+$(|P\setminus Q|,|Q\setminus P|,|P\cap Q|)=(\alpha,\beta,\gamma)$.
+To see this, a maximum cut may place every member of each false-twin class
+$A,B,D$ on one side: with other vertices fixed, its cut contribution is
+linear in the number placed on either side. Let $z$ vertices of $W$ be on
+the same side as the $d$ counted vertices. The four terms in~\eqref{eq:M}
+count $A$--$B$, $W$--$W$, and the two directions between $W$ and its complement.
+
+For each of the eight assignments the part depending on $z$ is
+\[
+ wd+(k-2d)z-z^2.
+\]
+Only the nearest integers to $(k-2d)/2$, clipped to $[0,w]$, need be checked.
+Thus no enumeration of core edge sets or cuts is required.
+
+\begin{theorem}[Cover formula for every two-type instance]\label{thm:cover}
+Let $\mathcal D$ consist of triples of nonnegative integers satisfying
+\[
+ \gamma+\max(0,\alpha-a)+\max(0,\beta-b)\leq u.
+\]
+Then
+\[
+ \boxed{\tc(G)=e_0+ps+qt-
+  \max_{(\alpha,\beta,\gamma)\in\mathcal D}
+   \bigl[p(\alpha+\gamma)+q(\beta+\gamma)
+          +M_k(\alpha,\beta,\gamma)\bigr].}
+\]
+\end{theorem}
+\begin{proof}
+The displayed constraint is exactly the feasibility condition for
+$P\subseteq S,Q\subseteq T$ with the three prescribed region sizes.
+Their intersection uses $\gamma$ vertices of $S\cap T$. The two exclusive
+parts must use at least $\max(0,\alpha-a)$ and $\max(0,\beta-b)$ further,
+disjoint vertices of that intersection. This condition is also sufficient:
+fill the exclusive parts from $S\setminus T,T\setminus S$ as far as possible,
+and then use distinct remaining vertices of $S\cap T$.
+In particular $\alpha+\beta+\gamma\leq a+b+u\leq k$.
+Now apply~\eqref{eq:reorder}, Lemma~\ref{lem:twoholes}, and~\eqref{eq:M}.
+\end{proof}
+The formula has three bounded integer loops (each at most $k$), eight binary
+assignments, and at most two choices for $z$ per assignment. This is an
+$O(k^3)$ arithmetic-operation procedure; bit complexity also depends on the
+input integers. It is an exact cover computation, not a packing formula.
+
+\section{Two useful counterexamples to shortcuts}
+\paragraph{Two optimal packings cannot simply be added.}
+Let $C=\{u,v,a,b\}$, $S=\{u,v,a\}$, $T=\{u,v,b\}$, and $p=q=3$.
+Each type considered with its own three-vertex clique admits three
+edge-disjoint triangles. But $E(K_S)\cup E(K_T)$ has only five edges:
+the two sets share $uv$. In the whole graph six packed triangles would
+require all six core edges, with exactly one per triangle. The edge $ab$
+cannot be used by an outside-centered triangle, so six are impossible.
+Five are attained by
+\[
+ x_1uv,\quad x_2ua,\quad x_3va,\quad y_1ub,\quad y_2vb.
+\]
+The five core edges other than $ab$ cover all triangles. Therefore
+$\tc(G)=\tp(G)=5$, whereas the two separate packing values sum to six.
+This refutes the additive shortcut, not Tuza's conjecture.
+
+\paragraph{The surviving whole graph need not be bipartite.}
+Let $C=\{a,b,u\}$, $S=\{a,u\}$, $T=\{b,u\}$, and $p=q=2$.
+Deleting $au,bu$ destroys all triangles, and the edge-disjoint triangles
+$x_1au,y_1bu$ show $\tc=2$. There are eleven edges, so the maximum
+triangle-free subgraph has nine edges. But the maximum cut has only eight:
+if the three core vertices have the same color, all eight spokes cross;
+otherwise two core edges cross, and the outside contribution is at most
+six (or four when $u$ is alone on its side). Thus full-graph bipartization
+costs three edges. Lemma~\ref{lem:twoholes} concerns the auxiliary core host,
+and does not assert $\tc(G)=|E(G)|-\mc(G)$.
+
+\section{An additive bound for an incomplete clique}
+The following auxiliary inequality will absorb the part of the clique
+left after assigning edges to outside-centered triangles. It does not
+assume Tuza's conjecture for that remaining graph.
+
+\begin{lemma}[Missing-edge allowance]\label{lem:allowance}
+Let $H$ be any graph on $k$ vertices and let
+$d=\binom{k}{2}-|E(H)|$. Then
+\[
+ \tc(H)\leq 2\tp(H)+d.
+\]
+\end{lemma}
+\begin{proof}
+Put $e=\binom{k}{2}$ and $v=\tp(K_k)$. The case $k\leq2$ is immediate.
+Two elementary inequalities, valid for every graph, are
+$\tc(H)\leq3\tp(H)$ and $\tc(H)\leq |E(H)|/2$.
+For the first, the edges of a maximum triangle packing meet every triangle;
+for the second, keep a cut containing at least half the edges. Consequently
+\[
+ \tc(H)-2\tp(H)\leq\tc(H)/3\leq(e-d)/6.
+\]
+If $d\geq e/7$, the last quantity is at most $d$, proving the claim.
+
+Suppose now that $d<e/7$. Set $c=\lfloor k^2/4\rfloor$ and $\rho=c/e$.
+A uniformly random balanced cut separates each pair with probability
+$\rho$, so $\tc(H)\leq(1-\rho)(e-d)$. Deleting the $d$ missing edges
+destroys at most $d$ triangles of a fixed packing in $K_k$, whence
+$v\leq d+\tp(H)$. Thus it suffices to show
+\begin{equation}\label{eq:small-defect}
+ d+\tc(H)\leq e-c+\rho d\leq 2v.
+\end{equation}
+For $k\geq6$, the classical complete-graph packing formula, as stated in
+\cite[Lemma 6]{bonamy}, implies
+\[
+ v\geq\frac{e-k/2-1}{3}.
+\]
+Indeed, the leave of an optimal packing has size $0,4,k/2$, or $k/2+1$
+according to the residue of $k$ modulo six, and is at most $k/2+1$ in this
+range. Moreover
+\[
+ \frac{2(e-k/2-1)}{3}-\left(e-\frac{6c}{7}\right)
+ =\begin{cases}
+ (2k^2-7k-28)/42,&k\text{ even},\\
+ (2k^2-7k-37)/42,&k\text{ odd}.
+ \end{cases}
+\]
+Both expressions are nonnegative: their smallest relevant arguments are
+$6$ and $7$, and the quadratics increase thereafter. Since $d<e/7$,
+$e-c+\rho d\leq e-6c/7\leq2v$, proving~\eqref{eq:small-defect}.
+
+For $k=3,4$, the small-defect case forces $d=0$, and
+$(e-c,v)=(1,1),(2,1)$. For $k=5$, it forces $d\leq1$; integrality gives
+$d+\tc(H)\leq\lfloor4+3d/5\rfloor=4=2v$.
+These small clique packings can be taken explicitly: one triangle for
+$k=3,4$, and $123,145$ for $k=5$.
+\end{proof}
+
+\section{A complete allocation of the neighborhood edges}
+For an arbitrary split graph, let $Q\subseteq E(K_C)$ be the set of core
+edges belonging to at least one $K_{N(x)}$, $x\in I$. Following
+\cite{zeng}, this is the neighborhood 2-shadow, here viewed as an edge set.
+A \emph{full allocation} assigns every edge $uv\in Q$ to a common neighbor
+$x\in I$, with edges assigned to each $x$ forming a matching. Equivalently,
+it is an edge-disjoint packing of $|Q|$ outside-centered triangles.
+
+\begin{theorem}[A full allocation suffices]\label{thm:full-allocation}
+If a split graph admits a full allocation of $Q$, put $R=K_C-Q$ and
+$D=|Q|$. Then
+\[
+ \tp(G)=D+\tp(R),\qquad \tc(G)=D+\tc(R),\qquad
+ \tc(G)\leq2\tp(G).
+\]
+There is no restriction on the number of neighborhood types.
+\end{theorem}
+\begin{proof}
+The allocated triangles can be combined with any packing in $R$, since
+they use only edges of $Q$ and spokes. Conversely, in any packing each
+triangle not contained in $R$ uses an edge of $Q$: this holds for core
+triangles by definition of $R$, and for outside-centered triangles by
+definition of $Q$. There are at most $D$ such triangles. This proves the
+packing identity.
+
+The set $Q$ together with a cover of $R$ covers every triangle of $G$.
+Conversely, every cover must contain at least $\tc(R)$ edges of $R$ and
+at least $D$ edges outside $R$ to hit the $D$ edge-disjoint allocated
+triangles. This proves the cover identity. Finally
+Lemma~\ref{lem:allowance}, applied to $R$, whose missing-edge count is $D$,
+gives $\tc(R)\leq2\tp(R)+D$. Adding $D$ proves the conclusion.
+\end{proof}
+
+\begin{theorem}[A uniform multiplicity regime]\label{thm:saturation}
+Consider any split graph. Suppose that each active neighborhood $S_i$
+of size $s_i\geq2$ occurs at least $h(s_i)$ times. Then Tuza's inequality
+holds. In particular, the two-type target holds whenever
+\[
+ p\geq h(s),\qquad q\geq h(t),
+\]
+for arbitrary $k,a,b,u,o$ and arbitrary overlap of the two neighborhoods.
+\end{theorem}
+\begin{proof}
+Assign each edge of $Q$ to one type containing both its endpoints, choosing
+only one type even when there are several possibilities. For each type,
+restrict a fixed $h(s_i)$-edge-coloring of $K_{S_i}$ to its assigned edges.
+Use a distinct outside vertex for each color. Within each center the edges
+are a matching; between centers the spokes are distinct; and each core
+edge was assigned only once. This is a full allocation, so
+Theorem~\ref{thm:full-allocation} applies.
+\end{proof}
+This closes an infinite parameter regime rather than one more clique size.
+The inequalities on multiplicities are sufficient, not necessary. They are
+not asserted to be sharp for Tuza's inequality, even though the separate
+compression thresholds in Theorem~\ref{thm:compression} are sharp.
+
+\section{Partial allocations and their cost}
+The preceding argument also measures what is missing when there are fewer
+copies. Take any outside-centered packing, let $P\subseteq Q$ be its core
+edges, and put $\ell=|P|$, $\delta=|Q\setminus P|$, $e=\binom{k}{2}$.
+
+\begin{corollary}[Allocation deficit]\label{cor:deficit}
+For every split graph and every such packing,
+\begin{align*}
+ \tc(G)-2\tp(G)&\leq\delta,\\
+ \tc(G)-2\tp(G)&\leq\delta+\frac{e-7\ell}{6}.
+\end{align*}
+In particular, $7\ell\geq e+6\delta$ is a sufficient condition for Tuza's
+inequality, even when the allocation is not full.
+\end{corollary}
+\begin{proof}
+Let $H=K_C-P$. The given packing can be combined with any packing in $H$,
+and $Q$ together with a cover of $H$ is a cover of $G$. Hence
+\[
+ \tc(G)-2\tp(G)
+ \leq \delta-\ell+\tc(H)-2\tp(H).
+\]
+Lemma~\ref{lem:allowance} bounds the last difference by $\ell$, proving the
+first claim. The elementary bound $\tc(H)-2\tp(H)\leq|E(H)|/6$ from the
+same proof, with $|E(H)|=e-\ell$, proves the second.
+\end{proof}
+
+For two types the deficit has an explicit upper bound. Write
+\[
+ e_S=\binom{s}{2},\quad e_T=\binom{t}{2},\quad e_U=\binom{u}{2},\quad
+ D=e_S+e_T-e_U,
+\]
+and $r_S=\min(p,h(s))/h(s)$, $r_T=\min(q,h(t))/h(t)$.
+Choose uniformly a prescribed number of color classes from a fixed
+complete-graph edge coloring for each type, independently between types.
+Each edge of $K_S$ is selected with probability $r_S$, and each edge of
+$K_T$ with probability $r_T$. If both types select an edge of $K_U$, retain
+it only for the first type. Deleting such edges preserves every matching.
+Linearity of expectation therefore gives a compatible packing of size at
+least
+\begin{equation}\label{eq:allocation-bound}
+ L=\left\lceil r_Se_S+r_Te_T-r_Sr_Te_U\right\rceil.
+\end{equation}
+Thus $\delta\leq D-L$. If $L=D$, Theorem~\ref{thm:full-allocation}
+applies. More generally, the condition $13L\geq e+6D$ implies Tuza's
+inequality by Corollary~\ref{cor:deficit}. These are sufficient criteria;
+failure of either criterion is not a counterexample to the conjecture.
+
+\paragraph{A deterministic route to the independent-selection bound.}
+The same bound has a short finite-sum proof useful for formalization.
+Given $h$ nonnegative weights, choose $r$ smallest ones, with sum $W_A$;
+let the sum of the unchosen weights be $W_B$. Comparing every chosen
+weight to every unchosen weight gives
+\[
+ (h-r)W_A\leq rW_B,\qquad hW_A\leq r(W_A+W_B).
+\]
+This includes $r=0$ and $r=h$.
+
+Put $p_0=\min(p,h(s))$ and $q_0=\min(q,h(t))$. Weight each $S$-color
+by the number of its edges inside $U=S\cap T$, and choose the $p_0$
+smallest weights. If $J_S$ is the selected edge set and
+$d=|J_S\cap E(K_T)|$, the weights sum to $e_U$, so
+$h(s)d\leq p_0e_U$. Next weight each $T$-color by the number of its
+edges in $J_S$, and choose the $q_0$ smallest weights. If $J_T$ is its
+selected edge set and $z=|J_S\cap J_T|$, these weights sum to $d$, so
+\[
+ h(t)z\leq q_0d,\qquad h(s)h(t)z\leq p_0q_0e_U.
+\]
+Keep all selected $S$-edges and only $J_T\setminus J_S$ for the second
+type. Deleting edges preserves every matching. Uniform class sizes give
+$|J_S|=p_0e_S/h(s)$ and $|J_T|=q_0e_T/h(t)$, and the compatible packing
+has $|J_S|+|J_T|-z$ triangles. Its integer size is therefore at least
+the ceiling in~\eqref{eq:allocation-bound}. The finite-sum argument,
+palette choices and two-type graph construction are now formalized in
+Lean in the integer form described below. This does not replace the
+separate controlled-overlap argument for the coupled bound.
+
+\paragraph{Lean verification of independent allocation.}
+The module \path{lean-independent-allocation/IndependentAllocation.lean}
+retains the preceding matching-class source verbatim, with one additional
+Mathlib import for distributivity over finite sums. The theorem
+\texttt{ordered\_subset} constructs an $r$-element subset by repeatedly
+removing a least weight; it proves that every chosen weight is no larger
+than any unchosen weight. The theorem \texttt{weighted\_subset} sums
+these comparisons, including the boundary cases $r=0$ and $r=h$.
+Two applications, in \texttt{select\_two\_palettes}, prove the product
+bound on collisions without probability or an enumeration assumption.
+
+The definition \texttt{twoAttached} is a Mathlib \texttt{SimpleGraph}
+on an arbitrary old vertex type and two disjoint types of new centers.
+Their neighborhoods are exactly $S$ and $T$; all new centers are mutually
+nonadjacent. The theorem \texttt{merge\_palettes} assigns shared old
+edges to the first type once and proves graph adjacency, edge-disjointness,
+and the exact count $|P|=|J_S\cup J_T|$. It also exports the condition that
+each produced triangle uses a new center, for later greedy completion.
+
+For every pair of multiplicities, \texttt{independent\_allocation}
+produces such a packing $P$ satisfying
+\[
+ h(t)p_0e_S+h(s)q_0e_T
+ \leq h(s)h(t)|P|+p_0q_0e_U.
+\]
+Since $h(s),h(t)>0$, this is the denominator-cleared form of the
+packing bound in~\eqref{eq:allocation-bound}. The Lean statement uses
+the displayed integer inequality, rather than a rational ceiling.
+For finite old vertex types, \texttt{independent\_allocation\_bound}
+replaces $|P|$ by the actual attained packing optimum. The old graph
+need only contain $S$ and $T$ as cliques; it need not be complete.
+The result allows arbitrary overlap, identical or nested neighborhoods,
+and zero multiplicities.
+
+Azure job \texttt{31aa1dc2a94c4ffd} verified the complete source with Lean
+4.34.0 and the pinned Mathlib revision in $79.186$ seconds. All seven
+final audits contain only \texttt{propext}, \texttt{Classical.choice},
+and \texttt{Quot.sound}; the false arithmetic control was rejected.
+Local and returned source hashes agree. Two prior attempts failed on
+elaboration and a missing import; both are retained as failures. A local
+preparation superseded before launch created no cloud resources. Every
+actual job had bounded memory and time and an independent cloud deletion
+guard; cleanup evidence is recorded separately.
+
+\textbf{Assessment.} One complete two-type graph-to-scalar packing lemma
+is now kernel-checked, including the compatibility step and the center
+condition needed later. The numerical formula and certificate domains
+are unchanged, so existing numerical certificates were not rerun. The
+coupled-palette lower bound below is now verified separately, using
+coherent colors and controlled palette intersections. Core completion
+is now verified too, with explicit preservation of the input packing.
+The full two-type Tuza proof remains partly outside Lean.
+
+\subsection{A shorter argument at half the multiplicity}
+The structure of the residual core gives a stronger conclusion than the
+general deficit estimate when $o\leq1$.
+
+\begin{theorem}[Half the color threshold]\label{thm:half}
+For a two-type split graph with $s,t\geq2$ and
+$|C\setminus(S\cup T)|\leq1$, Tuza's inequality holds whenever
+\[
+ p\geq\lceil s/2\rceil,\qquad
+ q\geq\lceil t/2\rceil.
+\]
+These thresholds equal $\lceil h(s)/2\rceil$ and $\lceil h(t)/2\rceil$.
+There is no restriction on the sizes or overlap of the two neighborhoods.
+More generally, in this setting it suffices that $2L\geq D$, with $L$
+given by~\eqref{eq:allocation-bound}.
+\end{theorem}
+\begin{proof}
+Put $R=K_C-Q$. Any outside-centered packing of size $L$ can be combined
+with a packing in $R$, while $Q$ and a cover of $R$ cover all triangles.
+Consequently
+\[
+ \tp(G)\geq L+\tp(R),\qquad
+ \tc(G)\leq D+\tc(R).
+\]
+If $o=0$, then $R$ consists of the complete bipartite graph between
+$A=S\setminus T$ and $B=T\setminus S$, with $U=S\cap T$ isolated.
+Thus $\tc(R)=\tp(R)=0$.
+If $o=1$, write $O=\{w\}$. The only triangles of $R$ are $wab$ with
+$a\in A,b\in B$. A matching between $A,B$ gives $\min(a,b)$ packed
+triangles; the edges from $w$ to the smaller side give a cover of the
+same size. Hence again $\tc(R)\leq2\tp(R)$. This proves the conclusion
+whenever $2L\geq D$.
+
+Under the displayed multiplicity assumptions, $r_S,r_T\geq1/2$.
+The expectation in~\eqref{eq:allocation-bound} is nondecreasing in each
+probability, since its two partial derivatives are
+$e_S-r_Te_U\geq0$ and $e_T-r_Se_U\geq0$. Therefore
+\[
+ L\geq \tfrac12e_S+\tfrac12e_T-\tfrac14e_U
+      =\tfrac12D+\tfrac14e_U\geq\tfrac12D,
+\]
+as required.
+\end{proof}
+This proof uses only matching decompositions, averaging, and the displayed
+description of the residual graph. It does not use
+Lemma~\ref{lem:allowance} or the clique triangle-packing formula.
+The multiplicity bound is sufficient and is not asserted to be sharp.
+
+For example, take $a=b=u=10$, $o=0$, and $p=q=10$. Then $k=30$,
+$s=t=20$, $h(s)=h(t)=19$, $D=335$, and
+\[
+ L=\left\lceil200-\frac{4500}{361}\right\rceil=188,
+ \qquad \tc(G)\leq335<376\leq2\tp(G).
+\]
+These are certified bounds, not claimed exact optima. In fact the coarser
+criterion $13L\geq e+6D$ narrowly fails here ($2444<2445$); the structural
+argument above closes the case without improving the allocation bound.
+
+\paragraph{Why the remaining allocation problem is real.}
+Let $S=\{a,u,v,w\}$, $T=\{b,u,v,w\}$, and $p=q=2$.
+Each type separately can pack four outside-centered triangles. Their
+union cannot pack eight: equality would force all four centers to use
+perfect matchings. The three shared vertices would then have total core
+degree $12$, while $a,b$ contribute total degree $4$. Four distinct edges
+inside $\{u,v,w\}$ would be required, but only three exist. Seven are
+possible, for example
+\[
+ x_1au,\ x_1vw,\ x_2av,\ x_2uw,\ y_1bw,\ y_1uv,\ y_2bu.
+\]
+Formula~\eqref{eq:allocation-bound} gives
+$\lceil4+4-4/3\rceil=7$, exactly the optimum for outside-centered
+triangles in this example. This does not assert optimality among packings
+that may also use core triangles.
+
+\section{Using core triangles at low multiplicity}
+The outside-allocation estimates ignore many available core triangles.
+We now use the classical averaging method for clique packings, as in
+Chahua and Guti\'errez~\cite[Corollary 8]{dense}, to obtain a complementary
+regime. The stronger permutation-averaging argument remains as background;
+the final proof uses the direct bound of Lemma~\ref{lem:sum-coloring}.
+Both approaches allow triangles in the core and at outside centers.
+
+Write $v_n=\tp(K_n)$, with $v_0=v_1=v_2=0$ and the classical values
+from \cite[Lemma 6]{bonamy} for $n\geq3$.
+
+\begin{lemma}[An elementary cyclic clique packing]\label{lem:cyclic-packing}
+For every integer $n\geq3$, the complete graph $K_n$ has a triangle
+packing of size at least $(n-1)(n-2)/6$.
+\end{lemma}
+\begin{proof}
+Label its vertices by $\mathbb Z/n\mathbb Z$ and take every three-element
+set $\{a,b,c\}$ with $a+b+c=0$. A pair $\{a,b\}$ determines its only
+possible third vertex $c=-a-b$, so these triangles are edge-disjoint.
+An uncovered edge must have $c=a$ or $c=b$. It therefore belongs to
+\[
+ \bigl\{\{v,-2v\}:v\in\mathbb Z/n\mathbb Z,\ v\ne-2v\bigr\}.
+\]
+There are at most $n-1$ such edges, because $v=0$ contributes no edge.
+Thus the number of packed triangles is at least
+\[
+ \frac{\binom n2-(n-1)}3=\frac{(n-1)(n-2)}6.
+\]
+This construction requires no exact maximum-packing formula.
+\end{proof}
+
+\paragraph{Lean verification of the construction.}
+The source \texttt{lean/CyclicPacking.lean} proves the construction first
+for an arbitrary finite abelian group and then specializes to
+$\mathbb Z/n\mathbb Z$. Its final theorem,
+\texttt{TuzaCyclic.cyclic\_clique\_packing}, states that for every positive
+$n$ there is a finite family $P$ of three-element vertex sets whose
+two-element edge sets are pairwise disjoint and for which
+\[
+ \binom n2\leq3|P|+(n-1).
+\]
+This is the integral edge-count form of the bound above. The source
+separately proves uniqueness of a triangle containing a prescribed edge,
+the exact count $3|P|$ of covered edges, and the bound $n-1$ on uncovered
+edges. It uses no enumeration over graph sizes or imported certificate
+success assertion.
+
+Azure job \texttt{5d63b3d4e13543f2} compiled the source with Lean 4.34.0
+and pinned Mathlib dependencies. The final axiom report contains only
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound}; a
+deliberately false arithmetic statement was rejected. The source contains
+no admitted proof, custom axiom, unsafe declaration, or native decision
+shortcut. The build used a 16 GiB whole-job memory limit, a 25-minute
+runtime limit, and an independently armed cloud deletion guard. Logs,
+source hashes, and resource-cleanup reports are retained under
+\texttt{lean/azure/runs/}. This verifies the cyclic construction and
+counting bound only. The stronger permutation-averaging lemma below and
+the full two-type Tuza theorem are not yet Lean-verified. The final route
+now uses the following separately verified direct construction.
+
+\begin{lemma}[Triangle packing by sums of labels]\label{lem:sum-coloring}
+Let $H$ be a finite simple graph on $n\geq1$ vertices, with $t(H)$
+triangles. Its triangles can be assigned $n$ colors so that triangles
+of the same color are edge-disjoint. Consequently,
+\[
+ \tp(H)\geq\left\lceil\frac{t(H)}n\right\rceil.
+\]
+In particular, applying this to $K_n$ gives the same guaranteed value
+$g(n)=\lceil(n-1)(n-2)/6\rceil$ for $n\geq3$.
+\end{lemma}
+\begin{proof}
+Label the vertices bijectively by $\mathbb Z/n\mathbb Z$. Color each
+triangle by the sum of its three labels. If two triangles share an edge
+with labels $a,b$ and have the same color, their third labels $c,d$
+satisfy $a+b+c=a+b+d$, hence $c=d$. The triangles are therefore equal.
+Each color class is an edge-disjoint packing. All $t(H)$ triangles lie
+in these $n$ classes, so the largest class has at least $t(H)/n$
+triangles; its size is an integer. For $K_n$, use
+$t(K_n)=\binom n3$ and $\binom n3/n=(n-1)(n-2)/6$.
+\end{proof}
+
+\paragraph{Strict Lean statement and scope.}
+The source \texttt{lean-sum-coloring/SumColoring.lean} proves the
+statement for an arbitrary finite vertex type and a Mathlib
+\texttt{SimpleGraph}. It returns a family $P$ of actual triangles,
+proves pairwise disjointness of their two-element edge sets, and proves
+$t(H)\leq |V(H)|\,|P|$. Its empty-vertex case is included. The proof first
+treats any finite family of three-element vertex sets with injective
+labels in a finite abelian group; it then uses the residue group of
+order $|V(H)|$. A separate corollary applies this to all three-element
+subsets and proves $\binom n3\leq n|P|$.
+
+Azure job \texttt{86a6063f11ee4e5a} compiled the entire module with Lean
+4.34.0. The three audited results, including
+\texttt{TuzaSumColoring.graph\_triangle\_packing}, depend only on
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound}.
+The deliberately false arithmetic control was rejected. No admitted
+proof, custom axiom, unsafe declaration, or native decision shortcut is
+used. This formal result replaces both the clique-packing input and the
+weaker averaging input in the final argument; the other graph lemmas
+and numerical certificates still require Lean formalization.
+
+\begin{lemma}[Averaging a clique packing]\label{lem:averaging}
+If a graph $H$ on $n\geq3$ vertices contains $t(H)$ triangles, then
+\[
+ \tp(H)\geq
+ \left\lceil\frac{v_n t(H)}{\binom n3}\right\rceil
+ \geq\left\lceil\frac{t(H)}n\right\rceil.
+\]
+\end{lemma}
+\begin{proof}
+Fix a packing of size $v_n$ in $K_n$ and relabel its vertices by a uniformly
+random permutation. Keep only those triangles whose three edges belong to
+$H$. The retained triangles are still edge-disjoint. Each triangle of the
+fixed packing becomes a uniformly random three-element vertex set, so the
+expected retained size is $v_n t(H)/\binom n3$. Some permutation attains at
+least this expectation, and integrality gives the first ceiling.
+Lemma~\ref{lem:cyclic-packing} gives
+$v_n\geq(n-1)(n-2)/6=\binom n3/n$, proving the second inequality
+without the classical maximum-packing formula. Equivalently, average
+the explicit cyclic packing itself to obtain the weaker bound directly.
+\end{proof}
+
+For a split graph with $k$ core vertices and $m$ outside vertices of degrees
+$d_1,\ldots,d_m$, put $n=k+m$ and $W=\sum_i d_i$. Its triangle count is
+\[
+ t(G)=\binom k3+\sum_{i=1}^m\binom{d_i}{2}.
+\]
+For two types this specializes to
+$t(G)=\binom k3+p\binom s2+q\binom t2$.
+In particular, the previously proved cover formula can be compared with
+the following explicit lower bound, requiring no search for a packing:
+\begin{equation}\label{eq:combined-bound}
+ B=\max\left\{v_k,\ L,\
+ \left\lceil\frac{v_{k+p+q}
+  \left(\binom k3+p\binom s2+q\binom t2\right)}
+  {\binom{k+p+q}3}\right\rceil\right\}\leq\tp(G).
+\end{equation}
+Here $L$ is the outside-allocation bound in~\eqref{eq:allocation-bound}.
+Thus $\tc(G)\leq2B$ is a sufficient scalar criterion. The next section
+exhibits a failure of its proposed universal version and strengthens the
+packing construction.
+
+\begin{theorem}[Few outside vertices]\label{thm:few-outside}
+Let $G$ be any split graph whose clique part has size $k$ and whose active
+independent part has size $m$. If
+\[
+ \boxed{k\geq4m+4,}
+\]
+then $\tc(G)\leq2\tp(G)$. The neighborhoods may be arbitrary; there is
+no bound on their number of types and no lower bound on their sizes.
+\end{theorem}
+\begin{proof}
+Delete inactive independent-side vertices, which belong to no triangle.
+If $m=0$, use Tuza's inequality for complete graphs (also a consequence of
+Lemma~\ref{lem:allowance} with no missing edges). Assume $m\geq1$, so $k\geq8$.
+
+Partition the core into two parts whose sizes differ by at most one.
+For each outside vertex, delete its edges to the part containing fewer of
+its neighbors. The remaining graph is bipartite after also deleting all
+edges internal to the two core parts. Therefore
+\begin{equation}\label{eq:degree-cover}
+ \tc(G)\leq\binom k2-\lfloor k^2/4\rfloor+\frac W2
+ \leq\frac{(k-1)^2}{4}+\frac W2.
+\end{equation}
+The clique packing formula gives
+\[
+ 2\tp(G)\geq2v_k\geq\frac{k^2-2k-3}{3}.
+\]
+Consequently~\eqref{eq:degree-cover} already proves the theorem when
+\[
+ W\leq R:=\frac{k^2-2k-15}{6}.
+\]
+
+Suppose $W>R$. By Cauchy--Schwarz and Lemma~\ref{lem:averaging},
+\[
+ 2\tp(G)\geq\frac{1}{n}
+ \left(\frac{k(k-1)(k-2)}3+\frac{W^2}{m}-W\right).
+\]
+Subtracting the last upper bound in~\eqref{eq:degree-cover}, and multiplying
+by $n>0$, shows that it suffices to prove $F(W)\geq0$, where
+\[
+ F(W)=\frac{W^2}{m}-\frac{n+2}{2}W
+       +\frac{k(k-1)(k-2)}3-\frac{n(k-1)^2}{4}.
+\]
+Since $m\leq(k-4)/4$ and $n\leq(5k-4)/4$, and $W\geq0$, we have
+\[
+ F(W)\geq f_k(W):=
+ \frac{4W^2}{k-4}-\frac{5k+4}{8}W
+ +\frac{k(k-1)(k-2)}3-\frac{(5k-4)(k-1)^2}{16}.
+\]
+This quadratic is strictly increasing on $[R,\infty)$, because
+\[
+ f_k'(R)=\frac{17k^2-16k-432}{24(k-4)}>0\qquad(k\geq8).
+\]
+For completeness, the remaining endpoint calculation has only nonnegative
+coefficients after writing $h=k-8\geq0$:
+\[
+ 36(k-4)f_k(R)
+ =h^4+28h^3+241h^2+594h+252>0.
+\]
+Thus $F(W)\geq f_k(W)\geq f_k(R)>0$ in this second case, proving the result.
+\end{proof}
+
+\paragraph{A fixed witness for why mixing the triangles helps.}
+Take $C=\{1,\ldots,11\}$, $S=\{1,\ldots,8\}$,
+$T=\{4,\ldots,11\}$, and two copies of each type. The exact cover formula
+gives $\tc(G)=35$, while the separate lower bounds are $v_{11}=17$ and
+$L=16$. Neither is enough alone. However, there are
+$\binom{11}{3}+4\binom82=277$ triangles and $v_{15}=35$, so averaging gives
+\[
+ \tp(G)\geq\left\lceil\frac{35\cdot277}{455}\right\rceil=22,
+ \qquad 35\leq44\leq2\tp(G).
+\]
+The companion checker also constructs an explicit packing of size $23$:
+start with the $35$ triples $\{i,j,i\mathbin{\mathrm{xor}}j\}$ on the nonzero
+four-bit vectors, label the two $S$-centers $12,13$ and the two $T$-centers
+$14,15$, and retain the triples that are triangles of $G$. It checks the
+retained edges for disjointness and a cover of size $35$. This is one fixed
+witness, not a verification of the general theorem.
+
+\section{A failed comparison and a compatible mixed packing}
+The scalar comparison in~\eqref{eq:combined-bound} is false in general.
+A bounded Azure search found
+\[
+ (a,b,u,o,p,q)=(4,4,5,3,5,5).
+\]
+Here $k=16$, $s=t=9$, and $n=26$. The exact cover formula gives
+$\tc(G)=75$, while all three entries in~\eqref{eq:combined-bound} equal
+$37$:
+\[
+ v_{16}=37,\quad
+ L=\left\lceil40-\frac{250}{81}\right\rceil=37,\quad
+ \left\lceil\frac{104(560+360)}{2600}\right\rceil=37.
+\]
+This disproves that sufficient comparison; it does not disprove Tuza's
+inequality. It tells us to construct compatible packings, rather than
+merely take the largest of separate estimates.
+
+\begin{lemma}[Keeping the residual core]\label{lem:wedges}
+Take any outside-centered packing and let $P$ be its set of core edges.
+Write $\ell=|P|$, $w(P)=\sum_{v\in C}\binom{d_P(v)}2$, and let $t(P)$
+be the number of triangles in $P$. For $k\geq3$,
+\begin{align*}
+ \tp(G)&\geq\ell+
+ \left\lceil\frac{v_k}{\binom k3}
+  \left(\binom k3-(k-2)\ell+w(P)-t(P)\right)\right\rceil,\\
+ \tp(G)&\geq\frac{(k-1)(k-2)}6+\frac{2\ell}{k}+\frac{2w(P)}{3k}.
+\end{align*}
+\end{lemma}
+\begin{proof}
+By inclusion--exclusion, the number of triangles in $K_C-P$ is
+\[
+ \binom k3-(k-2)\ell+w(P)-t(P).
+\]
+Each missing edge occurs in $k-2$ triples, each pair of adjacent missing
+edges occurs in one triple, and triples having all three edges missing
+must be subtracted once more. Apply Lemma~\ref{lem:averaging} to $K_C-P$
+and combine its packing with the given outside-centered packing. They
+share no edges, proving the first inequality.
+
+For the second, use the weaker bound $\tp(K_C-P)\geq t(K_C-P)/k$.
+Every triangle in $P$ contributes three distinct adjacent-edge pairs,
+so $w(P)\geq3t(P)$. Substituting and simplifying gives the stated bound.
+\end{proof}
+
+The next construction makes the quantities in this lemma explicit. Its
+palette is shared between the two types, so no core edge can be allocated
+twice. Choose an integer
+\[
+ H\geq\max\{2,h(|S\cup T|),p+q\}.
+\]
+Properly edge-color $K_{S\cup T}$ using $H$ colors, allowing unused colors.
+Assign distinct colors uniformly at random to the $p+q$ outside vertices.
+At a vertex of type $S$ or $T$, retain just the edges of its assigned color
+whose endpoints are both in its neighborhood. These edges are a matching,
+so they give an outside-centered packing. Put
+\begin{align*}
+ \lambda_H&=\frac{p\binom s2+q\binom t2}{H},\\
+ \omega_H&=\frac{3p(p-1)\binom s3+3q(q-1)\binom t3
+       +pq\,u\big((s-1)(t-1)-(u-1)\big)}{H(H-1)}.
+\end{align*}
+
+\begin{theorem}[A shared palette and the residual core]\label{thm:joint}
+For every two-type instance with $k\geq3$ and every such $H$,
+\[
+ \boxed{\tp(G)\geq J_H:=
+ \left\lceil\frac{(k-1)(k-2)}6+\frac{2\lambda_H}{k}
+                  +\frac{2\omega_H}{3k}\right\rceil.}
+\]
+There is no restriction on $o$, the overlap, or the relative multiplicities.
+\end{theorem}
+\begin{proof}
+Each edge of $K_S$ receives an $S$-center with probability $p/H$, and
+similarly for $T$. The two allocations are disjoint, even on shared edges.
+Thus $\mathbb E\ell=\lambda_H$.
+
+Two adjacent core edges have distinct colors. If both are assigned to
+$S$-centers, the probability is $p(p-1)/(H(H-1))$; there are
+$3\binom s3$ eligible unordered pairs. The corresponding term for $T$
+is identical with $q,t$ substituted. For mixed assignments, choose the
+shared endpoint in $S\cap T$, an $S$-neighbor and a $T$-neighbor, with the
+neighbors distinct. There are
+$u((s-1)(t-1)-(u-1))$ such choices, each with probability $pq/(H(H-1))$.
+This counts the two possible type assignments separately when both are
+eligible, as required. Hence $\mathbb E w(P)=\omega_H$.
+
+Take expectations in the second inequality of Lemma~\ref{lem:wedges} and
+use integrality of $\tp(G)$.
+\end{proof}
+
+\paragraph{An optional sharper version.}
+For $H\geq3$, define
+\[
+ \xi_H=\frac{p(p-1)(p-2)\binom s3+q(q-1)(q-2)\binom t3
+ +p(p-1)q\binom u2(s-2)+pq(q-1)\binom u2(t-2)}{H(H-1)(H-2)}.
+\]
+This equals $\mathbb E t(P)$. The first two terms assign all three triangle
+edges to one type. For two $S$-assignments and one $T$-assignment, the
+endpoints of the $T$-edge lie in $S\cap T$ and the third vertex lies in
+$S$; this gives $\binom u2(s-2)$ choices. The other mixed term is analogous.
+All three colors are distinct because the edge coloring is proper.
+The first inequality of Lemma~\ref{lem:wedges}, with expectations taken
+before the final ceiling, therefore yields the stronger bound
+\begin{equation}\label{eq:exact-joint}
+ \tp(G)\geq
+ \left\lceil\lambda_H+\frac{v_k}{\binom k3}
+  \left(\binom k3-(k-2)\lambda_H+\omega_H-\xi_H\right)\right\rceil.
+\end{equation}
+
+\section{Coupled colors and an elementary completion}
+The moment calculation above is useful, but it is not needed to repair the
+previous obstruction. We can coordinate the two local colorings more
+efficiently, then complete the packing by a maximal packing in the core.
+
+\begin{theorem}[Two local colorings with controlled overlap]\label{thm:coupled}
+Let $s,t\geq2$, $d=\max(s,t)$, and $H=h(d)$. Put
+\[
+ \bar p=\min(p,H),\qquad \bar q=\min(q,H),\qquad
+ z=\max(0,\bar p+\bar q-H).
+\]
+There is an outside-centered packing of size at least
+\[
+ \boxed{L_{\mathrm c}=\left\lceil
+ \frac{\bar p\binom s2+\bar q\binom t2-z\binom u2}{H}
+ \right\rceil.}
+\]
+If $s=t$ and $p+q\leq h(s)$, the maximum size of an outside-centered
+packing is exactly
+\[
+ \boxed{(p+q)\lfloor s/2\rfloor.}
+\]
+These statements allow arbitrary overlap and arbitrary $o$.
+The last identity concerns only outside-centered triangles, not the
+maximum packing in the whole graph.
+\end{theorem}
+\begin{proof}
+Fix an $H$-edge-coloring of $K_d$. Embed each of $S,T$ injectively in its
+vertex set, using the same labels for vertices of $S\cap T$. This is
+possible because the labels used by $S\setminus T$ and $T\setminus S$
+may overlap: these are two separate embeddings, not an embedding of their
+union. Pull back the coloring to each clique. Each local color class is
+a matching, and a shared edge receives the same color in both cliques.
+There is no requirement that the coloring be proper on $K_{S\cup T}$.
+
+Identify the colors with $\mathbb Z/H\mathbb Z$. Fix palettes $A,B$
+of sizes $\bar p,\bar q$ with $|A\cap B|=z$: choose $B$ from the
+complement of $A$ until it is exhausted, then use the necessary colors
+of $A$. For each $r\in\mathbb Z/H\mathbb Z$, use the palettes
+\[
+ A_r=\{c:c+r\in A\},\qquad B_r=\{c:c+r\in B\}.
+\]
+They retain the prescribed sizes and intersection. Assign their colors
+to distinct outside centers within each type. Retain any edge selected
+in both types only for the first type. All remaining triangles are
+edge-disjoint: within a center their core edges form a matching,
+between centers the spokes are distinct, and no core edge is retained
+twice.
+
+Let $J_r,K_r$ be the selected core-edge sets. As $r$ runs through all
+$H$ shifts, each edge of $S$ is selected exactly $\bar p$ times and
+each edge of $T$ exactly $\bar q$ times. Each common edge is selected
+by both exactly $z$ times, because its color agrees in the two
+neighborhoods. Summing the union identity gives
+\[
+ \sum_r |J_r\cup K_r|+z\binom u2
+   =\bar p\binom s2+\bar q\binom t2.
+\]
+A shift maximizing the union has size at least its finite average.
+Taking a ceiling proves the bound. This is a deterministic finite-sum
+argument; no probability formalization is needed.
+
+If $s=t$, every color class in the round-robin factorization of $K_s$ has
+size $\lfloor s/2\rfloor$. When $p+q\leq H$, assign disjoint color sets to
+the two types. No shared edge is selected twice, so every outside center
+attains this many triangles. No outside center can support more: its
+triangles must use disjoint pairs of its $s$ spokes. This proves exactness.
+\end{proof}
+
+\paragraph{Lean verification of the coupled lower bound.}
+The module \path{lean-coupled-allocation/CoupledAllocation.lean} retains
+\path{IndependentAllocation.lean} verbatim. The theorem
+\texttt{common\_labels} first treats $|S|\leq|T|$: inject
+$S\setminus T$ into $T\setminus S$, and fix every vertex of $T$.
+The resulting map is injective separately on $S$ and $T$.
+The theorem \texttt{coherent\_coloring} pulls back a complete-graph
+coloring, treating the reverse inequality by symmetry. It produces
+one edge-color function that is proper on each neighborhood, so
+agreement on shared edges is automatic.
+
+The theorem \texttt{minimal\_palettes} constructs the prescribed
+palette sizes and minimal intersection. The theorem
+\texttt{shift\_total} proves the finite counting identity for each
+edge family; \texttt{select\_coupled} sums the union identity and takes
+a maximizing shift. The earlier merging proof is generalized to arbitrary
+color types in \texttt{merge\_general}. It constructs actual triangles
+in the same \texttt{twoAttached} graph and checks adjacency,
+edge-disjointness, cardinality, and that every triangle uses a new center.
+
+For every pair of clique neighborhoods and every pair of multiplicities,
+\texttt{coupled\_allocation} produces a packing $P$ with
+\[
+ \bar p\binom s2+\bar q\binom t2
+ \leq H|P|+z\binom u2.
+\]
+This is the denominator-cleared integer form of the first bound in
+Theorem~\ref{thm:coupled}; the formal statement uses natural-number
+subtraction for $z=\max(0,\bar p+\bar q-H)$.
+The construction includes zero multiplicities and equal or nested
+neighborhoods, and allows an arbitrary ambient vertex type. The old
+graph need only contain $S$ and $T$ as cliques. For finite old vertex
+types, \texttt{coupled\_allocation\_bound} replaces $|P|$ by the actual
+attained graph packing number. The separate upper bound proving the
+equal-size optimum identity in Theorem~\ref{thm:coupled} remains a
+written argument; that identity is not claimed as a formalized result here.
+
+Azure job \texttt{659e03e8d7c248d8} verified the complete source in
+$73.128$ seconds with Lean 4.34.0 and the pinned Mathlib revision.
+All eight final dependency audits use only \texttt{propext},
+\texttt{Classical.choice}, and \texttt{Quot.sound}. The false arithmetic
+control was rejected, the successful log contains no proof errors or
+\texttt{sorryAx}, and the returned source matches the local source.
+The first attempt failed on a subtraction-injectivity lemma applied on
+the wrong side and is retained as a failure. Both jobs had a 16 GiB
+memory cap, a 25-minute worker limit and an independently armed cloud
+deletion guard; cleanup reports are separate from proof success.
+
+\textbf{Assessment.} Both allocation lower bounds used by the final route
+are now formalized for actual graphs. This closes a universal dependency,
+not merely an additional range of finite cases. For the earlier parameter
+example $s=t=9$, $u=5$, $p=q=5$, the independent expression is
+$2990/81$, with ceiling $37$, whereas the coupled expression is $350/9$,
+with ceiling $39$. These are guaranteed sizes, not exact optima.
+No numerical formula or certificate domain changed. The core-completion
+bridge below is now verified too; it consumes the exported center condition
+and preserves the input packing. The complete two-type Tuza proof and its
+numerical certificates are not yet formalized.
+
+For equal neighborhood sizes, the coupled bound is at least the old
+independent-selection bound~\eqref{eq:allocation-bound}. Their positive
+terms agree, while
+\[
+ \frac{z}{H}\leq\frac{\bar p\bar q}{H^2}.
+\]
+When $\bar p+\bar q>H$, this inequality is equivalent to
+$(H-\bar p)(H-\bar q)\geq0$; otherwise it is immediate.
+For unequal sizes no such dominance is asserted, so both bounds can be kept.
+
+\begin{lemma}[Greedy completion in the core]\label{lem:completion}
+Let $G$ be any split graph with a $k$-vertex clique and an outside-centered
+packing of size $\ell$. Define
+\[
+ c_k=\binom k2-\lfloor k^2/4\rfloor.
+\]
+Then this particular packing can be extended to a packing of size at least
+\[
+ \boxed{\max\left\{\ell,
+      \left\lceil\frac{c_k+2\ell}{3}\right\rceil\right\}.}
+\]
+There is no restriction on neighborhood types.
+\end{lemma}
+\begin{proof}
+Delete the $\ell$ core edges used by the given packing. Repeatedly choose
+a triangle in the remaining core and delete its three edges, until there
+is no triangle. If $b$ triangles were chosen, the leftover graph has
+$\binom k2-\ell-3b$ edges. Mantel's bound gives
+\[
+ \binom k2-\ell-3b\leq\lfloor k^2/4\rfloor,
+ \qquad
+ \ell+b\geq\left\lceil\frac{c_k+2\ell}{3}\right\rceil.
+\]
+The new triangles use neither selected core edges nor any spokes, so the
+two packings combine. The lower bound $\ell$ is automatic.
+
+For completeness, Mantel's bound here has a short proof. In a
+triangle-free graph with $k>0$ vertices and $e>0$ edges, every edge $vw$
+satisfies $d(v)+d(w)\leq k$. Summing over edges and applying
+Cauchy--Schwarz gives
+\[
+ 4e^2/k\leq\sum_v d(v)^2
+   =\sum_{vw\in E}(d(v)+d(w))\leq ke.
+\]
+Hence $e\leq k^2/4$; the zero cases and the integer rounding are immediate.
+\end{proof}
+
+\paragraph{Lean verification of core completion.}
+The module \path{lean-core-completion/CoreCompletion.lean} retains the
+coupled-allocation source verbatim and adds the Mathlib Tur\'an import.
+It first defines a graph from a finite family of two-element sets and
+connects that representation to Mathlib's unordered graph edges.
+The theorem \texttt{mantel\_family} applies
+\texttt{SimpleGraph.CliqueFree.card\_edgeFinset\_le} at $r=2$, together
+with \texttt{SimpleGraph.turanNumber\_two}, from the pinned library
+source~\cite{mathlib-turan}. The degree-sum argument above remains an
+elementary written proof; the Lean development reuses the library's
+formal general Tur\'an proof. Mantel is neither an extra hypothesis nor
+a custom axiom.
+
+The theorem \texttt{residual\_triangle\_free} proves that any maximum
+triangle packing leaves a triangle-free residual edge family. Otherwise
+an additional edge-disjoint triangle could be inserted, contradicting
+maximal cardinality. The used-edge count is exactly three times the
+packing size, and \texttt{residual\_packing} combines this identity with
+Mantel. These are abstract finite existence proofs; no enumeration is
+run when proving the result for arbitrary vertex types.
+
+The main theorem \texttt{core\_completion} assumes a graph on $V\oplus C$,
+with finite complete core $V$ and independent outer vertices $C$. For
+any finite packing $P$ whose triangles each contain an outer vertex,
+it constructs a packing $R$ satisfying
+\[
+ P\subseteq R,\qquad
+ 2|P|+\binom{|V|}{2}\leq3|R|+\left\lfloor\frac{|V|^2}{4}\right\rfloor.
+\]
+Every input triangle uses exactly one core edge, and these edges are
+distinct. The construction packs triangles into the unused core and
+lifts them into the original graph. It checks adjacency, disjointness
+between both families, exact union cardinality, and preservation of
+\emph{the particular input packing}. It includes an empty core and
+places no restriction on the number or sizes of outer neighborhoods.
+The outer vertex type can even be infinite, provided the input packing
+is finite.
+
+For finite outer vertex types, \texttt{core\_completion\_bound}
+compares the result to the actual attained graph optimum and also
+exports $|P|\leq\tp(G)$. The corollary \texttt{two\_type\_completion}
+applies directly to the \texttt{twoAttached} graph with a complete old
+core, so both earlier allocation constructions supply its input. The
+formal statements use the displayed integer inequality rather than a
+rational ceiling. For $k=16$ and $|P|=39$, it yields $|R|\geq45$ while
+retaining every initial triangle; this illustrates a universal result,
+not an assertion about an exact optimum.
+
+Azure job \texttt{054a1f953fcc47d0} verified the complete source in
+$87.570$ seconds with Lean 4.34.0 and pinned Mathlib revision
+\texttt{5ed296525643}. All seven final dependency audits use only
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound}.
+The false arithmetic control was rejected; the successful log has no
+proof errors or \texttt{sorryAx}, and local and returned source hashes
+agree. The first attempt failed on two pair-membership lemma references
+and an insertion-case elaboration; it remains a recorded failure.
+Both jobs had a 16 GiB memory cap, a 25-minute worker limit and an
+independently armed cloud deletion guard. Resource deletion is recorded
+separately from proof success.
+
+\textbf{Assessment.} This closes the graph-theoretic completion lemma
+used by the main two-type route, including the required compatibility
+with the previous allocation. It is not a claim that a new finite range
+of instances has been checked. The scalar formulas and certificate
+domains remain unchanged, so the numerical certificates were not rerun.
+The explicit cut construction and its exact costs are now formalized
+as described with Lemma~\ref{lem:explicit-cut}; rounding remains.
+Graph representation, inactive vertices, counting/domain
+reductions and sound certificate checking still remain; the complete
+two-type Tuza result is not yet a single fully formalized theorem.
+
+This completion needs neither the complete-graph triangle-packing formula
+nor the moment calculations. With
+\[
+ L_* = \max(L,L_{\mathrm c}),\qquad
+ M=\max\left\{L_*,\left\lceil\frac{c_k+2L_*}{3}\right\rceil\right\},
+\]
+we have $\tp(G)\geq M$. Thus $\tc(G)\leq2M$ is another sufficient scalar
+criterion. It is not asserted to hold for every two-type graph.
+
+\begin{corollary}[A total multiplicity condition]\label{cor:total-multiplicity}
+Suppose $s=t\geq2$ and $o\leq1$. Put $m=p+q$, $H=h(s)$, and
+$D=2\binom s2-\binom u2$. Tuza's inequality holds whenever
+\[
+ 2\min(m,H)\lfloor s/2\rfloor\geq D.
+\]
+In particular it holds if $p+q\geq h(s)$, without a separate lower bound
+on either $p$ or $q$.
+\end{corollary}
+\begin{proof}
+Retain any $\min(m,H)$ outside centers and give them distinct colors as
+in Theorem~\ref{thm:coupled}. This produces
+$\min(m,H)\lfloor s/2\rfloor$ outside triangles. As in the proof of
+Theorem~\ref{thm:half}, the residual graph $R=K_C-Q$ satisfies
+$\tc(R)\leq2\tp(R)$ when $o\leq1$. Combine this packing with a packing
+in $R$, and cover with $Q$ and a cover of $R$.
+Finally $H\lfloor s/2\rfloor=\binom s2\geq D/2$.
+\end{proof}
+
+\begin{lemma}[Balancing multiplicities for a common lower bound]\label{lem:balance}
+Fix $k,s=t,u$ and an integer $m\geq0$. Among graphs in this family with
+$p+q=m$, the cover number is largest when
+$(p,q)=(\lfloor m/2\rfloor,\lceil m/2\rceil)$.
+\end{lemma}
+\begin{proof}
+For each triangle-free core $J$, the cover cost is
+\[
+ \binom k2-|E(J)|+p(s-\alpha(J[S]))+q(s-\alpha(J[T])).
+\]
+Its minimum over $J$ is the cover number. Extend the same finite minimum
+of affine functions to real nonnegative $p,q$. On the line $p+q=m$ this
+function is concave, and it is symmetric under $p\leftrightarrow q$,
+because the two exclusive regions have equal sizes. Every integer between
+$i$ and $m-i$ therefore has value at least the value at $i$. The two
+central integers maximize it.
+\end{proof}
+
+After multiplicity compression, $p,q\leq H=h(s)$. In the equal-size
+case, $L_{\mathrm c}$ depends on $p,q$ only through $m=p+q$; so do its
+completion bound, $v_k$, and the whole-graph averaging bound. Consequently
+their comparison with the exact cover formula needs only balanced
+multiplicities. This is a reduction of that sufficient comparison, not
+a claim that proving Tuza for the balanced graph alone would automatically
+prove it for the others: the common packing lower bound must still suffice.
+
+\subsection{A stronger and shorter proof for the scaled family}
+\begin{lemma}[Lifting a split-graph certificate]\label{lem:lift}
+Let a split graph $G$ have a clique of size $k$, a packing of $b$ triangles,
+and a triangle cover of size $f$. For an integer $r\geq1$, replace every
+core vertex by an $r$-vertex clique and every outside vertex by $r$
+independent copies, replacing each old edge by the complete bipartite
+graph between its two classes. Call the resulting split graph $G^{(r)}$.
+Then
+\[
+ \tp(G^{(r)})\geq br^2,\qquad
+ \tc(G^{(r)})\leq fr^2+k\binom r2.
+\]
+\end{lemma}
+\begin{proof}
+For each packed triangle with vertex classes $X,Y,Z$, index each class
+by $\mathbb Z/r\mathbb Z$ and take
+\[
+ \{x_i,y_j,z_{i+j}\}\qquad(i,j\in\mathbb Z/r\mathbb Z).
+\]
+Every edge in each of the three complete bipartite blocks appears exactly
+once: the missing index is determined by either addition or subtraction
+modulo $r$. Different base triangles use disjoint edge blocks, so all
+$br^2$ triangles are edge-disjoint.
+
+For the cover, delete every edge block corresponding to a base-cover edge
+and all edges internal to each of the $k$ core classes. A surviving
+triangle would have to use three different classes and would project to
+an uncovered base triangle. This is impossible.
+\end{proof}
+
+\begin{corollary}\label{cor:scaled-obstruction}
+For every integer $r\geq1$, the two-type graph with
+\[
+ (a,b,u,o,p,q)=(4r,4r,5r,3r,5r,5r)
+\]
+satisfies Tuza's inequality. In fact
+\[
+ \tc(G)\leq83r^2-8r,\qquad \tp(G)\geq61r^2.
+\]
+\end{corollary}
+\begin{proof}
+Partition the core into a part consisting of all of $B=T\setminus S$,
+all of $U=S\cap T$, and $r$ vertices of $A=S\setminus T$, and its
+complement. These parts have sizes $10r$ and $6r$. Delete their internal
+edges and, for every $S$-center, its $3r$ spokes to the smaller part.
+All $T$-neighbors lie in the larger part. What remains is bipartite, and
+the deletion count is
+\[
+ \binom{10r}{2}+\binom{6r}{2}+(5r)(3r)=83r^2-8r.
+\]
+
+The graph is precisely the lift of the $r=1$ graph from
+Lemma~\ref{lem:lift}. The explicit packing below has $61$ triangles, so
+its lift has $61r^2$ triangles. Alternatively its $75$-edge cover lifts
+to the same bound $75r^2+16\binom r2=83r^2-8r$.
+Finally $2(61r^2)-(83r^2-8r)=39r^2+8r>0$.
+\end{proof}
+
+At $r=1$, the coupled bound gives $L_{\mathrm c}=39$, and its greedy
+completion bound is $45$. The moment bound~\eqref{eq:exact-joint} gives
+$46$, while a new fixed construction supplies $61$ explicitly listed
+edge-disjoint triangles and a $75$-edge cover. In this construction label
+$U$ by $0,\ldots,4$ and the four exclusive vertices of each type by
+$5,\ldots,8$ in its own local copy of $K_9$. Color an edge by the sum of
+its labels modulo nine. Assign colors $0,1,2,3,8$ to the five $S$-centers
+and colors $4,5,6,7,8$ to the five $T$-centers. The only common color is
+eight, which appears on no edge of $K_U$. Thus all ten centers receive
+four triangles, for a total of $40$. A fixed greedy pass through the core
+adds $21$ more, leaving $17$ core edges and no triangle. The companion
+checker verifies the full $61$-triangle packing and the cover directly;
+$61$ is not claimed to be the maximum packing size.
+To make the base packing explicit in these notes, use physical labels
+$U=\{0,\ldots,4\}$, $A=\{5,\ldots,8\}$,
+$B=\{9,\ldots,12\}$, and $O=\{13,14,15\}$; the local label of a
+vertex $v\in B$ is $v-4$. The additional core triangles are
+\[
+\begin{array}{rrrr}
+(0,5,13)&(0,6,7)&(0,14,15)&(1,5,12)\\
+(1,6,13)&(2,5,11)&(2,12,13)&(3,10,13)\\
+(3,11,14)&(3,12,15)&(4,9,10)&(4,11,13)\\
+(4,12,14)&(5,8,9)&(5,10,14)&(6,8,10)\\
+(6,9,11)&(7,8,11)&(7,9,13)&(7,10,15)\\
+(8,13,14)&&&
+\end{array}
+\]
+The cover deletes the edges within
+$U\cup B\cup\{5\}$ and its core complement, and the three spokes to
+$6,7,8$ from each $S$-center. It has $\binom{10}{2}+\binom62+15=75$
+edges, and the remaining graph is bipartite.
+The failure of the old bound at $r=1$ is not asserted to persist under every
+scaling; the corollary proves the whole scaled family independently of it.
+
+\section{Equal neighborhood sizes: a uniform large-core proof}
+In this section $s=t\geq2$, $a=s-u$, $o=k-2s+u$, and $m=p+q$.
+There is no restriction on the overlap, on $o$, or on the individual
+multiplicities. Write $c=c_k$ and $v=v_k$. We use
+\begin{equation}\label{eq:basic-estimates}
+ \frac{k^2-2k}{4}\leq c\leq\frac{(k-1)^2}{4},\qquad
+ 2v\geq\frac{k^2-2k-3}{3},\qquad
+ 2\tp(G)\geq
+ \frac{k(k-1)(k-2)/3+ms(s-1)}{k+m}.
+\end{equation}
+The last two bounds follow from the complete-graph packing formula and
+Lemma~\ref{lem:averaging}; we will use them only for $k\geq35$.
+
+\begin{lemma}[Two cover bounds]\label{lem:equal-covers}
+For every equal-size instance,
+\begin{align}
+ \tc(G)&\leq c+m\max\{0,s/2-k/8,s-k/2\},\label{eq:equal-cut-cover}\\
+ \tc(G)&\leq
+ \begin{cases}
+ c+(s-u)u,&s\leq k/2,\\
+ \binom k2-s(k-s)+su-u^2,&s\geq k/2.
+ \end{cases}\label{eq:equal-shadow-cover}
+\end{align}
+\end{lemma}
+\begin{proof}
+For the first bound, extend the cover function to real multiplicities as
+in Lemma~\ref{lem:balance}. Concavity and symmetry give
+$\tc(p,q)\leq\tc(m/2,m/2)$ for this weighted extension. We may therefore
+construct covers with equal weights $m/2$.
+
+Put $h=\lceil k/2\rceil$. Place all of $A=S\setminus T$ on one side of
+a balanced core cut and all of $B=T\setminus S$ on the other. This is
+possible because $a\leq\lfloor k/2\rfloor$. Placing the outside types
+on opposite sides deletes $c$ core edges and has spoke cost $mu/2$.
+Alternatively put both outside types opposite the larger core part.
+Choose that part by taking vertices of $U$ first, then $A\cup B$, then
+$O$. Its total number of neighbors, counted once for each type, is
+$\min(2h,h+u,2s)$. The resulting spoke cost is
+$\frac m2\max(0,2s-2h,2s-h-u)$. Combining these cuts, and using
+\[
+ \min\{u,\max(0,2s-2h,2s-h-u)\}
+ \leq\max(0,2s-2h,s-h/2),
+\]
+gives $\tc(G)\leq c+m\max(0,s-h,s/2-h/4)$.
+Since $h\geq k/2$, this proves~\eqref{eq:equal-cut-cover}.
+
+For the second bound delete all edges of the neighborhood shadow $Q$
+and keep a cut in $R=K_C-Q$, while retaining all spokes. Every outside
+neighborhood is independent in the retained core, so this is a triangle
+cover. Put $A,B$ on opposite sides of the cut, put $U$ on the same side
+as $B$, and put $z$ vertices of $O$ on the side of $A$. The number of
+retained edges is
+\[
+ a^2+ao+uz+z(o-z).
+\]
+If $s\leq k/2$, then $u\leq o$; choose an integer nearest to $(o+u)/2$.
+The retained count is
+$a^2+ao+\lfloor(o+u)^2/4\rfloor=\lfloor k^2/4\rfloor-au$.
+If $s\geq k/2$, choose $z=o$, obtaining
+$a^2+ao+uo=s(k-s)-su+u^2$.
+Subtract these retained counts from $\binom k2$.
+\end{proof}
+
+\begin{theorem}[Equal neighborhood sizes above a fixed core threshold]\label{thm:equal-large}
+If the two active neighborhoods have the same size and $k\geq35$, then
+$\tc(G)\leq2\tp(G)$ for all multiplicities and overlaps.
+\end{theorem}
+\begin{proof}
+First suppose $m\geq H=h(s)$. The distinct-color construction provides
+an outside packing of size $\binom s2$, by retaining any $H$ centers.
+Consequently the clique and completion bounds give
+\[
+ 2\tp(G)\geq\max\left\{2v,
+                     \frac{2c+2s(s-1)}3\right\}.
+\]
+If $s\leq k/2$, the second cover bound gives
+$\tc(G)\leq c+s^2/4\leq c+k^2/16$. By~\eqref{eq:basic-estimates},
+\[
+ 2v-(c+k^2/16)\geq\frac{k^2-8k-60}{48}>0.
+\]
+For $k/2\leq s\leq2k/3$, use $su-u^2\leq s^2/4$ in the cover bound.
+The completion bound minus this cover bound is at least
+\[
+ D_1(s)=-\frac{k^2}{3}+ks-\frac{7s^2}{12}
+                       +\frac k6-\frac{2s}{3}.
+\]
+This is concave in $s$, and its endpoint values are
+\[
+ D_1(k/2)=\frac{k(k-8)}{48},\qquad
+ D_1(2k/3)=\frac{k(4k-15)}{54}.
+\]
+Both are positive. For $s\geq2k/3$, feasibility gives $u\geq2s-k\geq s/2$.
+Since $su-u^2$ decreases on this range,
+$\tc(G)\leq\binom k2-(k-s)^2$. The completion bound minus this bound is
+at least
+\[
+ D_2(s)=\frac{2k^2}{3}-2ks+\frac{5s^2}{3}
+                          +\frac k6-\frac{2s}{3}.
+\]
+It is increasing for $s\geq2k/3$ when $k\geq3$, and
+$D_2(2k/3)=k(4k-15)/54>0$. This finishes the case $m\geq H$.
+
+Now suppose $m<H$. Theorem~\ref{thm:coupled} gives an outside packing
+of size $\ell=m\lfloor s/2\rfloor\geq m(s-1)/2$. Hence
+\begin{equation}\label{eq:equal-low-bounds}
+ 2\tp(G)\geq2v,\qquad
+ 2\tp(G)\geq m(s-1),\qquad
+ 2\tp(G)\geq\frac{2c+2m(s-1)}3.
+\end{equation}
+When $s\leq k/4$, the first cover bound is $\tc(G)\leq c\leq2v$.
+
+Suppose $k/4\leq s\leq3k/4$, so the cover bound is
+$C=c+ms/2-mk/8$. If $m\geq(k+3)/3$, take one quarter of the first bound
+in~\eqref{eq:equal-low-bounds} and three quarters of the third. This gives
+\[
+ 2\tp(G)-C\geq\frac{v-c}{2}+\frac{m(k-4)}8
+ \geq\frac{k-21}{24}>0.
+\]
+If $m\leq(k+3)/3$, use averaging instead. Define
+\[
+ F=\frac{k(k-1)(k-2)}3+ms(s-1)
+ -(k+m)\left(\frac{(k-1)^2}{4}+\frac{ms}{2}-\frac{mk}{8}\right).
+\]
+It suffices that $F\geq0$. Completing the square yields
+\begin{align*}
+ 48F&=P(k,m)+3m(4s-k-m-2)^2,\\
+ P(k,m)&=4k^3-24k^2+20k-9mk^2+12mk-12m^2-24m-3m^3.
+\end{align*}
+For nonnegative $k,m$, $P$ is strictly decreasing in $m$, since
+$\partial P/\partial m=-9k^2+12k-24-24m-9m^2<0$.
+Thus it suffices to evaluate at $m=(k+3)/3$. Writing $x=k-35\geq0$ gives
+\[
+ 9P\bigl(k,(k+3)/3\bigr)
+ =8k^3-282k^2+117k-351
+ =8x^3+558x^2+9777x+1294>0.
+\]
+
+Finally suppose $s\geq3k/4$, so the cover bound is
+$C=c+m(s-k/2)$. If $m\geq(k+2)/2$, the outside packing alone gives
+\[
+ 2\tp(G)-C\geq m(k/2-1)-c\geq(2k-5)/4>0.
+\]
+If $m\leq(k+2)/2$, put
+\[
+ F=\frac{k(k-1)(k-2)}3+ms(s-1)
+ -(k+m)\left(\frac{(k-1)^2}{4}+m(s-k/2)\right).
+\]
+Now
+\[
+ 12F=Q(k,m)+3m(2s-k-m-1)^2,\qquad
+ Q(k,m)=k^3-6k^2+5k-3m^3-6m^2-6m.
+\]
+Again $Q$ decreases in $m\geq0$. At the endpoint, writing $y=k-17\geq0$,
+\[
+ 8Q\bigl(k,(k+2)/2\bigr)
+ =5k^3-78k^2-68k-120
+ =5y^3+177y^2+1615y+747>0.
+\]
+Averaging proves the required inequality in the final case.
+\end{proof}
+
+\subsection{The genuinely finite remainder}
+The preceding theorem leaves only $3\leq k\leq34$ for crossing active
+types of equal size. Equal neighborhoods or a single active type are
+threshold graphs, already covered by~\cite{bonamy}. For crossing types,
+\[
+ 2\leq s\leq k-1,\quad
+ \max(0,2s-k)\leq u\leq s-1,\quad
+ 2\leq m\leq2h(s)
+\]
+is a finite, exhaustive domain after multiplicity compression.
+For each tuple the common packing lower bound is
+\[
+ K=\max\left\{v_k,L_{\mathrm c},
+ \left\lceil\frac{c+2L_{\mathrm c}}3\right\rceil,
+ \left\lceil\frac{v_{k+m}\bigl(\binom k3+m\binom s2\bigr)}{\binom{k+m}3}
+ \right\rceil\right\}.
+\]
+It depends on the multiplicities only through $m$. By
+Lemma~\ref{lem:balance}, it is enough to exhibit a cover of size at most
+$2K$ for $p=\lfloor m/2\rfloor$, $q=\lceil m/2\rceil$.
+The Azure-only worker \texttt{equal-finite/finite\_check.py} implements
+exact integer arithmetic for this finite remainder and saves each cover
+certificate. The bounded Azure run \texttt{eaf7da84d1a44ab7} completed all
+$81\,576$ tuples in $3\,384$ profiles on 7 October 2026, with no failed
+inequality. Every recorded cover is either a whole-graph cut cover or
+the shadow together with the complement of a cut in $R$. The full exact
+cover formula was never needed. Each certificate's region sizes and cost
+were checked separately from its selection. All lower bounds use integer
+arithmetic and ceilings. Six polynomial identities from the large-core
+proof were also checked using exact rational coefficients.
+
+The returned \texttt{case-certificates.jsonl} file has SHA-256
+\begin{center}\small\ttfamily
+0a76f1189f9dae0d5de5cc5f2d33f49bad17\\
+1f9f88793a421b7b2c50ca50f962
+\end{center}
+(the two lines concatenate to one digest). The domain, source hashes,
+execution result, and certificates are retained under
+\texttt{equal-finite/azure/runs/eaf7da84d1a44ab7/}.
+The run checked the finite inequalities, not the logical validity of all
+written lemmas; no Lean verification or independent general-proof audit
+is claimed. The large-core proof above does not depend on extrapolating
+from this finite check.
+
+\begin{theorem}[Two equal-size neighborhood types]\label{thm:equal-all}
+Let $G$ be a split graph with any specified clique part $C$. Suppose the
+active independent-side neighborhoods take at most two values, and that
+these values have equal cardinality. Then
+\[
+ \boxed{\tc(G)\leq2\tp(G).}
+\]
+The clique size, the two multiplicities, the overlap, and the number of
+core vertices outside the neighborhoods are unrestricted.
+\end{theorem}
+\begin{proof}
+Delete inactive vertices. With at most one neighborhood type, use the
+known threshold-graph theorem~\cite{bonamy}. Otherwise the two distinct
+equal-size neighborhoods cross. For $k\geq35$, apply
+Theorem~\ref{thm:equal-large}. For $k\leq34$, compress both multiplicities
+to $H=h(s)$ by Theorem~\ref{thm:compression}. The resulting graph lies
+in the finite domain above. Its packing number is at least the common
+bound $K$, while Lemma~\ref{lem:balance} bounds its cover number by that
+of the balanced instance with the same $k,s,u,m$. The saved certificate
+for that instance gives a cover of size at most $2K$. Compression
+preserves both parameters, so the original graph satisfies the inequality.
+\end{proof}
+
+The equal-size proof uses neither the exact cover formula of
+Theorem~\ref{thm:cover} nor the moment calculations of
+Theorem~\ref{thm:joint}. The cutoff $35$ is a sufficient proof threshold,
+not a claimed sharp structural boundary or an upper limit on the theorem.
+
+\section{A quantitative margin and transfer to unequal sizes}
+The equal-size proof gives more than a nonnegative difference between
+twice the packing number and the cover number. The following margin can
+pay for changing spokes. Its constants are sufficient, not claimed optimal.
+
+\begin{theorem}[A uniform equal-size margin]\label{thm:equal-margin}
+Suppose the two neighborhood types have equal size $s\geq2$, the core
+has $k\geq120$ vertices, and there are $m=p+q$ outside vertices. Then
+\[
+ \boxed{2\tp(G)-\tc(G)\geq
+ \frac{k-21}{48}\min\left(k,\frac{2m}{3}\right).}
+\]
+There is no restriction on the multiplicities or on the overlap. The
+statement also allows identical neighborhoods and a zero multiplicity.
+\end{theorem}
+\begin{proof}
+Write $\Delta=2\tp(G)-\tc(G)$, $\rho=(k-21)/48$, and
+$\mu=\min(k,2m/3)$. Retain $c,v,H=h(s)$ from the equal-size proof.
+All cover bounds below are from Lemma~\ref{lem:equal-covers}.
+
+If $m\geq H$, the first part of Theorem~\ref{thm:equal-large}'s proof
+gives, uniformly in $s$,
+\[
+ \Delta\geq E(k):=\frac{k^2}{48}-\frac{k}{6}-\frac54.
+\]
+Indeed, this is the bound for $s\leq k/2$. In the next interval the
+concave polynomial $D_1$ is bounded below by the smaller of
+$k(k-8)/48$ and $k(4k-15)/54$, and in the last interval $D_2$ is at
+least the latter value. Both values are at least $E(k)$ for $k\geq120$.
+Since
+\[
+ E(k)-\rho k=\frac{13k-60}{48}>0,
+\]
+and $\mu\leq k$, the assertion follows in this case.
+
+Now let $m<H$. In particular $m<k$, so $\mu=2m/3$.
+The packing bounds~\eqref{eq:equal-low-bounds} are available.
+If $s\leq k/4$, the cover bound is $c$, and
+\[
+ \Delta-\rho k\geq
+ \frac{k^2-2k-15}{12}-\rho k
+ =\frac{3k^2+13k-60}{48}>0.
+\]
+
+For $k/4\leq s\leq3k/4$, use the cover bound
+$C=c+ms/2-mk/8$. If $m\geq3k/8$, the convex combination of the clique
+and completion bounds used earlier gives
+\begin{align*}
+ \Delta-\rho\mu
+ &\geq-\frac{k^2-2k+9}{24}+\frac{m(8k-15)}{72}\\
+ &\geq\frac{k-72}{192}\geq0.
+\end{align*}
+If $m\leq3k/8$, use the averaging polynomial $P$ from the same proof.
+It decreases with $m$, and
+\[
+ P(k,3k/8)=\frac{239k^3}{512}-\frac{339k^2}{16}+11k.
+\]
+This quantity is positive for $k\geq120$, as also follows from the
+positive expression below. The completed square gives
+$\Delta\geq P(k,3k/8)/(48(k+m))$. Since $k+m\leq11k/8$,
+\[
+ \Delta\geq A(k):=\frac{239k^2}{33792}-\frac{113k}{352}+\frac16.
+\]
+Here $\mu\leq k/4$. Writing $x=k-120\geq0$, we have
+\[
+ A(k)-\rho k/4
+ =\frac{63k^2-7152k+5632}{33792}
+ =\frac{63x^2+7968x+54592}{33792}>0.
+\]
+In particular $A(k)>0$ and $P(k,3k/8)=66kA(k)>0$, justifying the
+denominator comparison.
+
+For $s\geq3k/4$, use $C=c+m(s-k/2)$. If $m\geq5k/8$, the outside
+packing alone gives
+\begin{align*}
+ \Delta-\rho\mu
+ &\geq \frac{m(35k-51)}{72}-\frac{(k-1)^2}{4}\\
+ &\geq\frac{31k^2+33k-144}{576}>0.
+\end{align*}
+If $m\leq5k/8$, the averaging polynomial $Q$ from the earlier proof
+decreases with $m$, and
+\[
+ Q(k,5k/8)=\frac{137k^3}{512}-\frac{267k^2}{32}+\frac54 k.
+\]
+The completed square and $k+m\leq13k/8$ give
+\[
+ \Delta\geq B(k):=\frac{137k^2}{9984}-\frac{89k}{208}+\frac5{78}.
+\]
+Indeed, with $x=k-120$, the required positivity and margin follow from
+\[
+ B(k)-\rho(5k/12)
+ =\frac{151k^2-7356k+1920}{29952}
+ =\frac{151x^2+28884x+1293600}{29952}>0.
+\]
+Thus $B(k)>0$ and $Q(k,5k/8)=(39k/2)B(k)>0$, validating the denominator
+comparison. Finally $\mu=2m/3\leq5k/12$, completing the proof.
+\end{proof}
+
+\begin{lemma}[Transferring a packing--cover margin across edge edits]
+\label{lem:edit-transfer}
+Let $G,H$ be graphs on the same vertex set. Put
+$D=E(G)\setminus E(H)$ and $A=E(H)\setminus E(G)$. Then
+\[
+ \tc(G)\leq\tc(H)+|D|,\qquad
+ \tp(G)\geq\tp(H)-|A|,
+\]
+and consequently
+\[
+ 2\tp(G)-\tc(G)\geq2\tp(H)-\tc(H)-|D|-2|A|.
+\]
+\end{lemma}
+\begin{proof}
+Take a triangle cover of $H$, restrict it to $E(G)$, and add $D$.
+A triangle of $G$ containing an edge of $D$ is covered by $D$; every
+other triangle is a triangle of $H$ and meets the restricted cover.
+For packing, remove from a maximum packing of $H$ all triangles that use
+an edge of $A$. Since the packed triangles are edge-disjoint, at most
+$|A|$ of them are removed. The surviving triangles form a packing of $G$.
+Combining the two inequalities proves the last statement.
+\end{proof}
+
+\begin{theorem}[Unequal sizes with controlled editing cost]
+\label{thm:unequal-transfer}
+Let $2\leq s<t\leq k$, $k\geq120$, and put
+\[
+ \delta=t-s,\quad p_0=\min(p,h(s)),\quad q_0=\min(q,h(t)),
+ \quad m=p_0+q_0,\quad w=\min(q_0,2p_0).
+\]
+Then, for every feasible overlap,
+\begin{equation}\label{eq:unequal-margin}
+ \boxed{2\tp(G)-\tc(G)\geq
+ \frac{k-21}{48}\min(k,2m/3)-\delta w.}
+\end{equation}
+In particular, Tuza's inequality holds whenever
+\begin{equation}\label{eq:weighted-transfer}
+ \boxed{144\delta\min(q_0,2p_0)
+ \leq(k-21)\min\bigl(3k,2(p_0+q_0)\bigr).}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Compress the two multiplicities to $p_0,q_0$ using
+Theorem~\ref{thm:compression}. Both $\tc$ and $\tp$ are preserved.
+Write $G_0$ for the compressed graph. Since
+$|T\setminus S|=t-|S\cap T|\geq t-s=\delta$, choose
+$X\subseteq T\setminus S$ with $|X|=\delta$.
+
+There are two ways to make the neighborhood sizes equal on the same
+vertex set. Replacing $T$ by $T\setminus X$ deletes $\delta q_0$ spokes
+from $G_0$ and adds no edges. The margin of the resulting equal-size
+graph therefore transfers to $G_0$ with a loss of at most $\delta q_0$.
+Alternatively replacing $S$ by $S\cup X$ adds $\delta p_0$ spokes and
+deletes no edges. Its margin transfers with a loss of at most
+$2\delta p_0$. Both equal-size graphs have the same $k$ and $m$, so
+Theorem~\ref{thm:equal-margin} supplies the same lower margin for them.
+Choose the smaller loss and apply Lemma~\ref{lem:edit-transfer}.
+This proves~\eqref{eq:unequal-margin}; multiplication by $144$ gives
+the sufficient condition~\eqref{eq:weighted-transfer}.
+\end{proof}
+
+\begin{corollary}[A size-only sufficient condition]\label{cor:near-equal}
+For a split graph with at most two active neighborhood types, let
+$\delta=|s-t|$. If
+\[
+ \boxed{k\geq\max(120,48\delta+21),}
+\]
+then $\tc(G)\leq2\tp(G)$, for arbitrary multiplicities and overlap.
+\end{corollary}
+\begin{proof}
+Equal sizes follow directly from Theorem~\ref{thm:equal-margin}.
+Otherwise relabel the types so that $s<t$. We have $q_0\leq h(t)\leq k$,
+and
+\[
+ w=\min(q_0,2p_0)\leq\frac{2(p_0+q_0)}3.
+\]
+For the latter inequality, use $q_0\leq2p_0$ or $q_0\geq2p_0$
+respectively. Thus $w\leq\min(k,2m/3)$. The assumed bound gives
+$\delta\leq(k-21)/48$, so the right-hand side
+of~\eqref{eq:unequal-margin} is nonnegative.
+\end{proof}
+
+For example, a size difference of two is covered for every $k\geq120$,
+with no further constraint on the multiplicities. The weighted criterion
+can also work far from equal sizes: at
+$(k,s,t,u,p,q)=(120,30,90,10,1,89)$, its equal-size margin is
+$123.75$ and its editing loss is $120$. This is only an illustration
+of the sufficient criterion, not a claim that the example escapes all
+previous sufficient criteria. At $(120,60,63,20,20,40)$ the margin is
+$82.5$ and the loss is $120$, so this criterion fails; such failure does
+not assert a counterexample to Tuza's conjecture.
+
+The results in this section are analytic: they do not use the finite
+certificate remainder for $k\leq34$. The bounded Azure job
+\texttt{af130e010c9e4012} checked ten exact rational polynomial identities
+used in the margin calculation and four prescribed scalar examples.
+All identities passed and all four example outcomes matched their
+specified expectations, including the failed sufficient criterion above.
+The worker exited successfully and the returned source hashes matched.
+Its reports are retained under
+\texttt{stability-check/azure/runs/af130e010c9e4012/}.
+These algebra checks are not an independent audit of the graph-theoretic
+arguments and are not a Lean verification.
+
+\section{A direct cover bound for unequal neighborhood sizes}
+
+\begin{lemma}[An explicit cover from any core cut]\label{lem:explicit-cut}
+Let $C$ be the $k$-vertex core, let $S,T\subseteq C$ be the two
+neighborhoods, and let their multiplicities be $p,q\geq0$. For every
+$A\subseteq C$, with $j=|A|$, there is a triangle edge cover $F$ with
+\begin{align*}
+ |F|={}&\binom j2+\binom{k-j}2\\
+ &+p\min\{|S\cap A|,|S\setminus A|\}
+  +q\min\{|T\cap A|,|T\setminus A|\}.
+\end{align*}
+Consequently the displayed expression is an upper bound on $\tc(G)$.
+No optimality of this cut or of this particular cover is asserted.
+\end{lemma}
+\begin{proof}
+Give the core parts $A$ and $C\setminus A$ different colors. Put each
+outside type on the side containing fewer of its neighbors. Delete
+all edges whose endpoints have the same color. Every triangle has a
+same-color pair, so the deleted edges meet every triangle.
+
+The deleted core edges are the pairs within $A$ and the pairs within
+$C\setminus A$, counted by the two binomial terms. For an outside
+vertex of type $S$, the deleted spokes are exactly its neighbors on
+its assigned side, giving the smaller of the two intersection counts;
+the argument for type $T$ is identical. Distinct outer vertices give
+distinct spokes, and no spoke is a core edge. Thus the displayed sum
+is the exact number of deleted edges.
+\end{proof}
+
+\paragraph{Lean verification of the cut construction.}
+The module \path{lean-cut-covers/CutCovers.lean} retains the previous
+core-completion source and appends the verified cover-compression
+namespace before the new namespace \texttt{TuzaCutCovers}. It defines
+\texttt{splitGraph} for a finite complete core $V$ and a finite outer
+set $D$, with an arbitrary neighborhood $N(c)$ for each $c\in D$.
+There is no restriction on the number of neighborhood types.
+For a prescribed core part $A$ and a Boolean side $b(c)$ for each center,
+\texttt{cutEdges} explicitly lists all deleted pairs and spokes.
+The theorem \texttt{explicit\_cut} produces a cover of exact size
+\[
+ \binom{|A|}{2}+\binom{|V|-|A|}{2}
+ +\sum_{c\in D}\begin{cases}
+ |N(c)\cap A|,&b(c)=\mathrm{true},\\
+ |N(c)\setminus A|,&b(c)=\mathrm{false}.
+ \end{cases}
+\]
+The proof checks actual adjacency, the same-color pair in every
+triangle, and every disjointness and injectivity fact needed for this
+count. Empty parts, empty neighborhoods and zero multiplicities are
+included. The explicit identity \texttt{splitGraph\_twoAttached}
+connects the graph representations. The corollaries
+\texttt{two\_type\_cut} and \texttt{two\_type\_cover\_bound} prove
+Lemma~\ref{lem:explicit-cut} with an actual edge-family witness and the
+previously verified attained optimum \texttt{coverNumber}.
+
+Azure job \texttt{1b407cf947d14ecc} verified the complete cumulative
+source in $78.454$ seconds with Lean 4.34.0 and pinned Mathlib revision
+\texttt{5ed296525643}. All nine final dependency audits use only
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
+The false arithmetic control was rejected; the successful log has no
+proof errors or \texttt{sorryAx}, and returned and local sources agree.
+Attempt \texttt{3bf77e7527254d80} failed at three representation
+interfaces and remains a recorded failure. Both jobs used a 16 GiB cap,
+a 25-minute worker limit and an independently armed cloud cleanup guard.
+Deletion is checked separately from proof success.
+
+\textbf{Assessment.} This supplies actual covers with exact costs for
+arbitrary finite sizes, including the integer common cuts used in
+Lemma~\ref{lem:common-cut}. It changes no scalar formula or certificate
+domain. The full common-neighborhood rounding bound is now verified as described
+with Lemma~\ref{lem:common-cut}. Balanced rounding is now verified too,
+as described with Lemma~\ref{lem:separable-cover}, and the full separable
+cover bound is now verified. Shadow-cover counts, the general split-graph
+representation and inactive vertices, graph
+identities/domain reductions and sound certificate evaluation remain.
+The full two-type theorem is not yet completely formalized.
+
+The transfer argument loses information by making the two sizes equal.
+For covers, that loss can be avoided entirely. Define
+\[
+ f_k(d)=\max\{0,d/2-k/8,d-k/2\},\qquad
+ c_k=\binom k2-\lfloor k^2/4\rfloor.
+\]
+
+\begin{lemma}[A separable cover bound for two arbitrary sizes]
+\label{lem:separable-cover}
+For two neighborhoods $S,T\subseteq C$ of any sizes $s,t$, with
+multiplicities $p,q\geq0$,
+\[
+ \boxed{\tc(G)\leq c_k+p f_k(s)+q f_k(t).}
+\]
+No restriction on their intersection or on the unused core is needed.
+\end{lemma}
+\begin{proof}
+We first allow a core vertex to be split fractionally between two parts,
+each of total size $k/2$. Put
+\[
+ b_s=f_k(s),\quad b_t=f_k(t),\qquad
+ r_s=s-b_s,\quad r_t=t-b_t,\quad u=|S\cap T|.
+\]
+The definition implies
+\[
+ 0\leq b_s\leq s/2,\quad r_s\leq k/2,
+ \qquad 0\leq b_t\leq t/2,\quad r_t\leq k/2,
+ \qquad 2(b_s+b_t)\geq s+t-k/2.
+\]
+We construct a fractional cut and fix which part contains each outside
+type, so that the expected spoke deletion costs per center are at most
+$b_s,b_t$, respectively.
+
+If $u\leq b_s+b_t$, retain $r_s$ units of $S$ on one side and $r_t$
+units of $T$ on the opposite side. Disjoint choices of these retained
+portions exist: first use exclusive vertices, then the common region.
+The required common amounts are $(u-b_s)_+$ and $(u-b_t)_+$, whose sum
+is at most $u$. Each retained portion has size at most $k/2$, so fill
+the remaining spaces to obtain two equal parts. Put each outside type
+opposite its designated retained portion. Its deleted spoke mass is
+at most $b_s$ or $b_t$.
+
+If $u\geq s+t-k/2-(b_s+b_t)$, place retained portions of sizes
+$r_s,r_t$ on the same side. They can be chosen with union size
+\[
+ \max(r_s,r_t,r_s+r_t-u)\leq k/2,
+\]
+by overlapping them as much as their common region permits. Fill this
+side to size $k/2$ and put both outside types on the opposite side.
+Again the deleted spoke masses satisfy the desired bounds.
+The two cases cover all values of $u$ because
+$2(b_s+b_t)\geq s+t-k/2$.
+
+To round the fractional cut, let $x_v\in[0,1]$ be the fraction of core
+vertex $v$ assigned to the first side, so $\sum_v x_v=k/2$.
+Keep the outside-type orientations fixed. The spoke cost is an affine
+function $d+\sum_v w_v x_v$; the weights $w_v$ may be negative.
+Let $A$ contain the $\lfloor k/2\rfloor$ smallest weights, and let
+$b\notin A$ have the smallest remaining weight $a=w_b$.
+For $k=0$ there is nothing to round. For $k>0$, the ordering gives
+\[
+ \sum_v w_v x_v-\sum_{v\in A}w_v
+ \geq a\left(\sum_v x_v-|A|\right).
+\]
+Indeed, for $v\in A$ we have
+$w_v(x_v-1)\geq a(x_v-1)$, whereas for $v\notin A$ we have
+$w_vx_v\geq ax_v$.
+
+For even $k$, the right-hand side is zero, so choose $A$.
+For odd $k$, it is $a/2$: choose $A$ if $a\geq0$, and choose
+$A\cup\{b\}$ if $a<0$. In the latter case the added cost is
+$a\leq a/2$. In each case the chosen integral part has size
+$\lfloor k/2\rfloor$ or $\lceil k/2\rceil$, and its spoke cost is
+at most $p b_s+q b_t$.
+
+Delete all within-part edges using the explicit cut cover of
+Lemma~\ref{lem:explicit-cut}. Every such balanced cut has core cost
+\[
+ \binom{|A|}{2}+\binom{k-|A|}{2}
+ =\binom k2-|A|(k-|A|)=c_k.
+\]
+Thus an actual triangle cover has size at most $c_k+p b_s+q b_t$,
+as required.
+\end{proof}
+
+\paragraph{Lean checkpoint: balanced rounding with a cover witness.}
+The rounding step above is now kernel-verified in
+\texttt{lean-balanced-rounding/BalancedRounding.lean}.
+The theorem \texttt{balanced\_round} applies to an arbitrary finite set,
+arbitrary real weights (including negative ones), and every vector in
+$[0,1]^k$ with total mass $k/2$. It returns a balanced subset whose
+linear cost does not exceed the fractional cost. The theorem
+\texttt{balanced\_core\_cost} proves the exact natural-number identity
+for the constant $c_k$, including the empty core.
+
+For fixed outside-type orientations, \texttt{spoke\_cost\_identity}
+identifies the fractional spoke cost as an affine function.
+The theorem \texttt{balanced\_cut\_witness} combines the rounding
+with \texttt{explicit\_cut}: it returns an actual triangle edge cover,
+its exact cardinality, and the bound by $c_k$ plus the fractional
+spoke cost. The corollary \texttt{balanced\_cover\_bound} passes to
+the attained optimum \texttt{coverNumber}.
+
+Azure job \texttt{77db4a0436b04225} verified the complete cumulative
+source on its first compiler attempt in $75.042$ seconds, excluding
+provisioning and package installation. All nine final dependency audits
+use only \texttt{propext}, \texttt{Classical.choice} and
+\texttt{Quot.sound}. The false arithmetic control was rejected; the
+successful log contains no proof errors or \texttt{sorryAx}, and the
+returned source agrees with the local source. Lean 4.34.0 and Mathlib
+revision \texttt{5ed296525643} remain pinned. The worker had a 16 GiB
+cap, a 25-minute limit and an independently armed cloud deletion guard.
+Resource deletion is checked separately from proof success.
+
+\textbf{Assessment.} This closes the general rounding and graph-cover
+construction, not merely finitely many instances. The fractional existence
+step has subsequently been verified as described next. No scalar formula
+or certificate domain changed, so the numerical certificates were not rerun.
+
+\paragraph{Lean checkpoint: the full separable cover bound.}
+The complete Lemma~\ref{lem:separable-cover} is now kernel-verified in
+\texttt{lean-separable-cover/SeparableCover.lean}. The theorem
+\texttt{fractional\_cut} proves existence under the abstract hypotheses
+\[
+ 0\leq b_s\leq s,\quad 0\leq b_t\leq t,\quad
+ s-b_s\leq k/2,\quad t-b_t\leq k/2,\quad
+ s+t-k/2\leq 2(b_s+b_t).
+\]
+It constructs a function $x:C\to[0,1]$ of total mass $k/2$ and fixes
+the outside-type orientations so that the deleted spoke masses are at
+most $b_s,b_t$. Both overlap regimes are explicit. Uniform fractions
+on $S\setminus T$, $T\setminus S$ and $S\cap T$ realize the prescribed
+region masses. Their bounds and sums include empty regions. The lemma
+\texttt{fill\_between} attains any total between two pointwise capacity
+functions, by an explicit affine interpolation; its zero-denominator
+case is handled separately.
+
+The lemmas \texttt{penalty\_bounds} and \texttt{penalty\_gap} verify
+these hypotheses for $b_s=f_k(s)$ and $b_t=f_k(t)$. The final theorem
+\texttt{separable\_cover\_bound} invokes the already verified
+\texttt{balanced\_cover\_bound}. Thus the graph-cover bound has no
+unproved fractional-existence assumption.
+
+The same source also verifies \texttt{four\_region\_cover}: any feasible
+assignment of masses to all four regions totaling $k/2$ gives the
+corresponding affine cover cost, with either choice of outer sides.
+The theorem \texttt{greedy\_four} proves feasibility of greedily filling
+four nonnegative capacities. The four specific piecewise formulas used
+by the interval certificate still need to be connected to these lemmas.
+
+Azure job \texttt{2e1913652b1c40c2} verified the cumulative source in
+$76.560$ seconds, excluding provisioning and package installation.
+All eleven final audits use only \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}; the false arithmetic
+control was rejected. Local and returned sources agree and the successful
+log has no proof errors or \texttt{sorryAx}. Attempt
+\texttt{d56a278a000c4b87} failed on definition elaboration, explicit casts
+and a sum binder; its report is retained as a failure. Each worker had
+a 16 GiB cap, a 25-minute limit and an independent cloud deletion guard.
+Deletion is recorded separately from proof verification.
+
+\textbf{Assessment.} The separable cover lemma is completely formalized
+for arbitrary sizes, intersections and multiplicities. This closes a
+universal lemma needed by both the analytic and finite branches. Shadow
+covers, the particular fractional-cut formulas, graph bounds and
+representations, scalar reductions, and sound verification of the two
+certificates remain before the final theorem can be claimed in Lean.
+
+For $s=t$, this recovers~\eqref{eq:equal-cut-cover} without exchanging
+the two neighborhoods or balancing their multiplicities. The new lemma
+removes the cover-symmetry obstacle completely. It does not assert that
+different local matching capacities can all be attained simultaneously.
+
+\begin{lemma}[A single type can pay for its separable cover cost]
+\label{lem:single-type-certificate}
+Let $k\geq35$, $2\leq d\leq k$, and $0\leq r\leq h(d)$.
+Let $H$ consist of a $k$-vertex core and $r$ outside centers with one
+common neighborhood of size $d$. Then
+\[
+ 2\tp(H)\geq c_k+r f_k(d).
+\]
+\end{lemma}
+\begin{proof}
+The $r$ local colors give $r\lfloor d/2\rfloor$ outside triangles,
+including at the endpoint $r=h(d)$. The clique, outside, completion,
+and averaging bounds therefore give
+\[
+ 2\tp(H)\geq\max\left\{2v_k,\ r(d-1),\
+ \frac{2c_k+2r(d-1)}3,\
+ \frac{k(k-1)(k-2)/3+r d(d-1)}{k+r}\right\}.
+\]
+Here is a self-contained scalar comparison, so this lemma does not
+require the separate theorem for equal neighborhood sizes.
+For $d\leq k/4$, the clique bound gives $2v_k\geq c_k$.
+For $k/4\leq d\leq3k/4$ and $r\geq(k+3)/3$, take one quarter of
+the clique bound and three quarters of the completion bound. Subtracting
+$c_k+r(d/2-k/8)$ gives at least
+\[
+ \frac{v_k-c_k}{2}+\frac{r(k-4)}8
+ \geq\frac{k-21}{24}>0.
+\]
+For $d\geq3k/4$ and $r\geq(k+2)/2$, the outside bound gives
+\[
+ r(d-1)-[c_k+r(d-k/2)]
+ =r(k/2-1)-c_k\geq(2k-5)/4>0.
+\]
+It remains to justify the averaging comparison in the complementary
+multiplicity ranges. For a nonnegative real $m$, define
+\[
+ F_d(m)=\frac{k(k-1)(k-2)}3+md(d-1)
+ -(k+m)\left(\frac{(k-1)^2}{4}+m f_k(d)\right).
+\]
+The following identities hold in their indicated degree ranges:
+\begin{align*}
+ 48F_d(m)&=P(k,m)+3m(4d-k-m-2)^2,
+       &&k/4\leq d\leq3k/4,\\
+ 12F_d(m)&=Q(k,m)+3m(2d-k-m-1)^2,
+       &&3k/4\leq d\leq k,\\
+ P(k,m)&=4k^3-24k^2+20k-9mk^2+12mk-12m^2-24m-3m^3,\\
+ Q(k,m)&=k^3-6k^2+5k-3m^3-6m^2-6m.
+\end{align*}
+Both $P,Q$ decrease with $m\geq0$. At their required endpoints,
+\begin{align*}
+ 9P(k,(k+3)/3)&=8h^3+558h^2+9777h+1294>0,
+       &&h=k-35\geq0,\\
+ 8Q(k,(k+2)/2)&=5j^3+177j^2+1615j+747>0,
+       &&j=k-17\geq0.
+\end{align*}
+Thus $F_d(m)\geq0$ when $k/4\leq d\leq3k/4$ and
+$m\leq(k+3)/3$, or when $d\geq3k/4$ and $m\leq(k+2)/2$.
+Taking $m=r$ proves the remaining cases, since
+$c_k\leq(k-1)^2/4$. The comparison includes $r=0$ and $r=h(d)$.
+\end{proof}
+
+\begin{theorem}[Two direct unequal-size regimes]\label{thm:direct-regimes}
+Let $G$ have at most two active neighborhood types and a core of size
+$k\geq35$. Compress their multiplicities to
+\[
+ p_0=\min(p,h(s)),\quad q_0=\min(q,h(t)),\quad m=p_0+q_0.
+\]
+Then Tuza's inequality holds if either
+\[
+ \boxed{\min(s,t)\leq k/4}
+ \qquad\text{or}\qquad
+ \boxed{3m\leq k+3.}
+\]
+Both statements allow arbitrary overlap; the first places no further
+restriction on either multiplicity or on the larger neighborhood size.
+\end{theorem}
+\begin{proof}
+Compression preserves both parameters, so work with $p_0,q_0$.
+Relabel so that $s\leq t$.
+
+If $s\leq k/4$, then $f_k(s)=0$, and
+Lemma~\ref{lem:separable-cover} gives
+$\tc(G)\leq c_k+q_0 f_k(t)$, independently of $p_0$.
+The subgraph on the core and the $q_0$ centers of type $T$ is the graph
+of Lemma~\ref{lem:single-type-certificate}. Its packing is also a
+packing of $G$, so $2\tp(G)\geq c_k+q_0 f_k(t)\geq\tc(G)$.
+
+Now suppose $3m\leq k+3$. The previous case permits us to assume
+$s,t>k/4$; $m=0$ is just a clique. Put
+\[
+ F_d=\frac{k(k-1)(k-2)}3+m d(d-1)
+ -(k+m)\left(\frac{(k-1)^2}{4}+m f_k(d)\right).
+\]
+For $k/4<d\leq3k/4$, the completed-square identity in the proof of
+Lemma~\ref{lem:single-type-certificate} gives $48F_d=P(k,m)+3m(4d-k-m-2)^2\geq0$, since
+$m\leq(k+3)/3$ and $k\geq35$.
+For $d\geq3k/4$, the corresponding identity is
+$12F_d=Q(k,m)+3m(2d-k-m-1)^2\geq0$.
+Here we use $m\leq(k+3)/3\leq(k+2)/2$ and the positivity bound
+for $Q$ proved in the same lemma (already valid for $k\geq17$).
+
+Average $F_s,F_t$ with weights $p_0/m,q_0/m$. Their weighted sum is
+\begin{align*}
+ &\frac{k(k-1)(k-2)}3+p_0s(s-1)+q_0t(t-1)\\
+ &\hspace{8mm}-(k+m)\left(\frac{(k-1)^2}{4}
+                  +p_0 f_k(s)+q_0 f_k(t)\right)\geq0.
+\end{align*}
+The first line divided by $k+m$ is a lower bound for $2\tp(G)$
+by clique averaging. The last parenthesis is an upper bound for
+$\tc(G)$ by Lemma~\ref{lem:separable-cover} and
+$c_k\leq(k-1)^2/4$. This proves the second assertion.
+\end{proof}
+
+The first new regime can have arbitrarily large relative size imbalance;
+for example it covers all feasible pairs with $s\leq k/4$ and
+$t$ close to $k$, regardless of the multiplicities. The second replaces
+the earlier sufficient bound $m\leq(k-4)/4$ by
+$m\leq(k+3)/3$ for two types and $k\geq35$.
+Both are analytic deductions and use no finite remainder certificates.
+
+\subsection{A shadow cover for unequal sizes}
+\begin{lemma}[An explicit cut outside the neighborhood shadow]
+\label{lem:unequal-shadow}
+Suppose $s\leq t$ and put $u=|S\cap T|$. For arbitrary multiplicities,
+\[
+ \tc(G)\leq
+ \begin{cases}
+ c_k+(s-u)u,&t\leq k/2,\\
+ \binom k2-t(k-t)+su-u^2,&t\geq k/2.
+ \end{cases}
+\]
+The two expressions agree when $t=k/2$.
+\end{lemma}
+\begin{proof}
+Write $A=S\setminus T$, $B=T\setminus S$, $U=S\cap T$ and
+$O=C\setminus(S\cup T)$, with sizes $a=s-u$, $b=t-u$, $u$, and
+$o=k-s-t+u$. Delete the entire neighborhood shadow
+$E(K_S)\cup E(K_T)$. This destroys all outside-centered triangles.
+In the residual core, keep a cut with $A$ on one side, $B\cup U$
+on the other, and $z$ vertices of $O$ on the $A$ side. Its edge count is
+\[
+ ab+a(o-z)+tz+z(o-z)
+ =a(k-s)+(k-2a)z-z^2.
+\]
+Since $a\leq b$, the real maximizer $z_*=k/2-a$ is nonnegative.
+Also $a+o=k-t$, so $z_*\leq o$ exactly when $t\leq k/2$.
+In that case choose an integer $z$ nearest to $z_*$; the retained
+edge count is $\lfloor k^2/4\rfloor-au$. If $t\geq k/2$, choose
+$z=o$ instead, retaining $ab+to=t(k-t)-su+u^2$ edges.
+The surviving graph has a bipartite core and no outside-centered
+triangle. The deleted core edges therefore form a triangle cover.
+Subtract the retained edge count from $\binom k2$.
+These explicit cuts are not asserted to be maximum cuts.
+\end{proof}
+
+\begin{corollary}[Two neighborhoods no larger than half the core]
+\label{cor:two-half}
+If $\max(s,t)\leq k/2$, then $\tc(G)\leq2\tp(G)$,
+with no restriction on multiplicities or overlap.
+\end{corollary}
+\begin{proof}
+The preceding lemma gives
+\[
+ \tc(G)\leq c_k+(s-u)u\leq c_k+s^2/4\leq c_k+k^2/16.
+\]
+The classical clique-packing bound and $c_k\leq(k-1)^2/4$ imply
+\[
+ 2\tp(G)-\tc(G)\geq2v_k-c_k-k^2/16
+ \geq\frac{k^2-8k-60}{48}>0 \qquad(k\geq13).
+\]
+Thus a packing using only core triangles already suffices.
+For $6\leq k\leq12$, retain the integer bounds. The same argument
+works by the following values from the complete-graph packing formula:
+\[
+\begin{array}{c|rrrrrrr}
+ k&6&7&8&9&10&11&12\\\hline
+ c_k+\lfloor\lfloor k/2\rfloor^2/4\rfloor&8&11&16&20&26&31&39\\
+ 2v_k&8&14&16&24&26&34&40
+\end{array}
+\]
+For $k\leq3$ there is no active outside neighborhood, so the graph's
+triangles lie in its clique. For $k=4,5$, an active neighborhood has
+size two. With at most one distinct active neighborhood, the shadow
+bound is $c_k\leq2v_k$. With two distinct active neighborhoods, choose
+one center from each and pack their two triangles: their core edges
+are different. When $k=4$ this suffices, since the shadow bound is at
+most $c_4+1=3$. When $k=5$, at least eight core edges remain after these
+two triangles, more than Mantel's bound of six. A third, core triangle
+can be added, while the shadow cover has size at most $c_5+1=5$.
+These small cases are direct arguments, not a computational remainder.
+\end{proof}
+
+\begin{corollary}[A large exclusive part]\label{cor:large-exclusive}
+If $k\geq35$ and $|T\setminus S|\geq k/2$, then Tuza's inequality
+holds for arbitrary multiplicities. In particular it holds whenever
+$|s-t|\geq k/2$.
+\end{corollary}
+\begin{proof}
+After compression, make a fractional balanced cut whose first side
+of size $k/2$ lies entirely in $T\setminus S$. Put the $S$ centers on
+that first side and the $T$ centers on the other side. No $S$ spoke is
+deleted, and the deleted $T$ spoke mass is $q(t-k/2)$. Balanced rounding
+therefore gives
+\[
+ \tc(G)\leq c_k+q(t-k/2)\leq c_k+q f_k(t).
+\]
+Lemma~\ref{lem:single-type-certificate} supplies a packing in the induced
+one-type graph that pays for this bound. Finally,
+$t-s\geq k/2$ implies $|T\setminus S|\geq t-s\geq k/2$; interchange
+the types if needed.
+\end{proof}
+
+\begin{lemma}[An unbalanced cut inside the common neighborhood]
+\label{lem:common-cut}
+Put $m=p+q$, $u=|S\cap T|$, and $E=\binom k2$. For every
+$0\leq\ell\leq u$,
+\[
+ \tc(G)\leq E+ps+qt-\ell(k+m)+\ell^2+\tfrac14.
+\]
+In particular choose $\ell=\min(u,(k+m)/2)$.
+\end{lemma}
+\begin{proof}
+Put $B=k+m$, $Q(x)=x^2-Bx$, and choose
+$j=\min(u,\lfloor B/2\rfloor)$. Make one core part a $j$-element
+subset of $S\cap T$ and place all outside centers on the other side.
+The explicit cut construction gives a triangle cover $F$ with
+\[
+ |F|=\binom j2+\binom{k-j}2+p(s-j)+q(t-j)
+     =E+ps+qt+Q(j).
+\]
+If $u\leq\lfloor B/2\rfloor$, then $j=u$ and, for every $\ell\leq u$,
+\[
+ Q(\ell)-Q(j)=(u-\ell)(B-u-\ell)\geq0.
+\]
+Otherwise $j=\lfloor B/2\rfloor$. Since $B$ is an integer,
+$0\leq B-2j\leq1$, and completing the square gives
+\[
+ Q(j)=-\frac{B^2}{4}+\frac{(B-2j)^2}{4}
+ \leq-\frac{B^2}{4}+\frac14
+ \leq Q(\ell)+\frac14.
+\]
+Thus the same cover $F$ satisfies the asserted bound for all
+$0\leq\ell\leq u$. The minimum of $Q$ on this interval occurs at
+$\ell=\min(u,B/2)$, yielding in particular
+\[
+ \tc(G)\leq E+ps+qt-\frac{B^2}{4}
+           +\max(0,B/2-u)^2+\frac14.
+\]
+\end{proof}
+
+\paragraph{Lean verification of the full common-neighborhood bound.}
+The module \path{lean-common-rounding/CommonRounding.lean} retains
+\path{lean-cut-covers/CutCovers.lean} verbatim, adds real-number and
+arithmetic tactic imports, and appends namespace
+\texttt{TuzaCommonRounding}. The theorem \texttt{commonCost\_real}
+proves the identity between the natural-number edge count and its real
+quadratic expression. The assumptions $j\leq k,s,t$ explicitly justify
+every conversion of truncated natural subtraction to real subtraction.
+The formula for $\binom n2$ is proved by induction from the binomial
+recurrence, including $n=0$ and $n=1$.
+
+The theorem \texttt{rounded\_quadratic} proves the two-case argument
+above with $j=\min(u,\lfloor B/2\rfloor)$. The theorem
+\texttt{rounded\_integer\_min} also proves $Q(j)\leq Q(r)$ for every
+integer $0\leq r\leq u$. This minimizes the cost within the specified
+common-neighborhood cut family; it does not assert that the resulting
+cover is a minimum cover of the graph.
+
+The theorem \texttt{common\_cut\_witness} returns an actual cover $F$,
+its exact integer cost and a bound valid \emph{simultaneously for every
+real $\ell\leq u$}. In particular it covers the entire interval in
+Lemma~\ref{lem:common-cut}. The theorem \texttt{common\_cover\_bound}
+passes to the attained graph optimum \texttt{coverNumber}, while
+\texttt{common\_cover\_optimized} gives the clipped-square expression
+at the end of the proof. Empty cores, empty neighborhoods and zero
+multiplicities are included. No averaging theorem or numerical checker
+output is used as a proof assumption.
+
+Azure job \texttt{6f55a192e642448b} verified the cumulative source on its
+first actual Lean compiler attempt. The build and audit took $67.403$
+seconds, excluding provisioning and package installation. All eight
+final dependency audits use only \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}. The false arithmetic
+control was rejected; the successful log contains no proof errors or
+\texttt{sorryAx}, and local and returned source hashes agree. Lean 4.34.0
+and Mathlib revision \texttt{5ed296525643} are pinned.
+
+Earlier job \texttt{69df8614cfa84164} failed during Ubuntu package
+installation, before Lean ran. Its environment-failure report is retained;
+the bootstrap now has bounded package-download retries and timeouts.
+Both jobs had a 16 GiB worker cap, a 25-minute limit and an independently
+armed cloud deletion guard. Resource deletion is checked separately from
+proof success.
+
+\textbf{Assessment.} The whole common-neighborhood cover lemma, including
+the $1/4$ allowance and its optimized form, is now kernel-checked. The
+written proof has been simplified to the same deterministic argument.
+No scalar formula or certificate domain changed, so no numerical
+certificate replay was needed. Balanced rounding is now verified as well.
+The full separable cover bound is now verified too. Shadow covers,
+the specific fractional-cut formulas, the general split-graph representation and
+inactive vertices, counting/domain reductions and sound certificate
+evaluation still remain. The full two-type Tuza theorem is not yet
+completely formalized.
+
+\begin{corollary}[A common-neighborhood criterion]
+\label{cor:common-cut}
+Suppose $k\geq34$ and $p+q=m\leq2k$. Then Tuza's inequality holds if
+\[
+ \boxed{4(k+m)(k+m-2u)_+^2\leq k(k^2+3m^2).}
+\]
+After multiplicity compression, the condition $m\leq2k$ is automatic.
+\end{corollary}
+\begin{proof}
+Use $x=s/k$, $y=t/k$, $\alpha=p/k$, $\beta=q/k$, $\mu=m/k$,
+$\rho=1/k$, and put $e=((1+\mu)/2-u/k)_+$.
+The preceding cover bound, divided by $k^2$, is
+\[
+ C=\frac{(1-\rho)^2}{4}+\alpha x+\beta y
+                      -\frac\mu2-\frac{\mu^2}{4}+e^2.
+\]
+Let $A$ be the normalized averaging lower bound on $2\tp(G)$.
+Completing squares gives the identity
+\begin{align*}
+ (1+\mu)(A-C)
+ &=B(\mu,\rho)-(1+\mu)e^2\\
+ &\quad+\alpha\left(x-\frac{1+\mu+\rho}{2}\right)^2
+       +\beta\left(y-\frac{1+\mu+\rho}{2}\right)^2,\\
+ B(\mu,\rho)
+ &=\frac1{12}+\frac{\mu^2}{4}
+       -\frac{(1+\mu^2)\rho}{2}
+       +\left(\frac5{12}-\frac\mu2\right)\rho^2.
+\end{align*}
+For $0\leq\mu\leq2$ and $0\leq\rho\leq1/34$,
+\[
+ B(\mu,\rho)\geq
+ \frac1{12}-\frac1{68}-\frac7{12\cdot34^2}
+             +\left(\frac14-\frac1{68}\right)\mu^2
+ =\frac{315}{4624}+\frac4{17}\mu^2
+ \geq\frac{1+3\mu^2}{16}.
+\]
+The stated criterion is exactly
+$16(1+\mu)e^2\leq1+3\mu^2$. Thus $A\geq C$.
+\end{proof}
+
+\subsection{The remaining explicit comparison}
+For a compressed two-type instance, put $E=\binom k2$,
+$R=K_C-(E(K_S)\cup E(K_T))$, and retain the independent and coupled
+outside bounds $L,L_{\mathrm c}$. Define
+\begin{align*}
+ C_{\mathrm{dir}}&=\min\left\{
+ \left\lfloor c_k+p f_k(s)+q f_k(t)\right\rfloor,\ E-\mc(R)\right\},\\
+ B(r,z)&=\left\lceil\frac{v_{k+r+z}
+       \bigl(\binom k3+r\binom s2+z\binom t2\bigr)}{\binom{k+r+z}3}\right\rceil,\\
+ L_*&=\max(L,L_{\mathrm c}),\\
+ K_{\mathrm{dir}}&=\max\left\{v_k,L_*,
+  \left\lceil\frac{c_k+2L_*}{3}\right\rceil,
+  B(p,q),B(p,0),B(0,q)\right\}.
+\end{align*}
+The two one-type averaging bounds come from ignoring the other type
+when constructing a packing. The preceding lemmas prove
+$\tc(G)\leq C_{\mathrm{dir}}$ and $\tp(G)\geq K_{\mathrm{dir}}$.
+Thus a sufficient remaining obligation is
+\begin{equation}\label{eq:direct-comparison}
+ C_{\mathrm{dir}}\leq2K_{\mathrm{dir}}.
+\end{equation}
+Its universal validity is not proved here. This comparison retains both
+degrees and their intersection without charging for equalization, and
+needs neither the exact cover optimization nor the earlier moment bounds.
+
+The bounded Azure job \texttt{e32bb49cebfb45fb} checked this comparison
+on all $106\,020$ tuples with
+\[
+ 4\leq k\leq18,\quad 2\leq s<t\leq k-1,\quad
+ \max(0,s+t-k)\leq u\leq s-1,\quad
+ 1\leq p\leq h(s),\quad1\leq q\leq h(t),
+\]
+and on $40\,000$ seeded samples with
+$k\in\{35,60,120,250,1000,10000\}$. Every comparison passed.
+The same job independently minimized the cost of balanced whole-graph
+cuts over both outside-type orientations in each sampled instance;
+every resulting cost satisfied Lemma~\ref{lem:separable-cover}'s bound.
+It also checked four prescribed examples. These are finite arithmetic
+checks and a bounded falsification attempt, not a proof
+of~\eqref{eq:direct-comparison} for all parameters or an independent
+audit of the written proofs. A failure of this sufficient comparison,
+if found later, would not itself be a counterexample to Tuza.
+The worker exited successfully and returned-source hashes matched;
+its sources and reports are retained under
+\texttt{direct-cover/azure/runs/e32bb49cebfb45fb/}.
+
+A separate bounded diagnostic run, \texttt{468b9e7c023348a7}, made
+$606\,528$ evaluations in six degree/multiplicity regimes at
+$k=35,120,6000$ and retained $36$ candidate minima, checked with exact
+rational arithmetic. None failed the original integer comparison.
+However, replacing the palettes and clique estimates by smooth lower
+bounds is not innocuous: at
+\[
+ (k,s,t,u,p,q)=(35,24,34,23,11,11)
+\]
+the relaxed cover minus the best relaxed packing bound is $111/136>0$.
+The original integer bounds instead give a cover at most $554$ and a
+packing at least $287$. An explicit whole-graph cut improves that cover
+to $451$. This diagnoses a loss in the simplified comparison, not a
+failure of Tuza, and motivates retaining explicit overlap-sensitive
+cuts in the next comparison. The diagnostic search is not a global
+optimization certificate. Its worker exited successfully, returned
+source hashes matched, and both resource groups were confirmed deleted.
+
+\subsection{A continuous comparison with explicit balanced cuts}
+The separable cover deliberately forgets the overlap. The following
+refinement retains it and admits an exact interval check over a bounded
+domain, without placing an upper bound on $k$. The final version below is certified in Lemma~\ref{lem:interval-certificate}.
+
+Suppose $k\geq35$, $s\leq t$, $t\geq k/2$, and the multiplicities
+have been compressed. Normalize
+\[
+ x=s/k,\quad y=t/k,\quad w=u/k,\quad
+ \alpha=p/k,\quad\beta=q/k,\quad\rho=1/k,\quad\mu=\alpha+\beta.
+\]
+Put $c^+=(1-\rho)^2/4$ and $f(d)=\max(0,d/2-1/8,d-1/2)$.
+Two normalized cover upper bounds are
+\[
+ D_0=c^++\alpha f(x)+\beta f(y),\qquad
+ D_1=(1-\rho)/2-y(1-y)+xw-w^2.
+\]
+Here and below a normalized cover bound is divided by $k^2$, and a
+normalized packing bound bounds $2\tp(G)/k^2$.
+
+There are four more explicit cover bounds. The normalized sizes of the
+four regions $A,B,U,O$ are $x-w,y-w,w,1-x-y+w$. Fill a part of size
+$1/2$ in one of the orders
+\[
+ (U,A,B,O),\quad(U,B,A,O),\quad(A,U,O,B),\quad(A,O,U,B),
+\]
+taking the minimum of the next region's size and the unfilled space.
+Let $r_A,r_B,r_U,r_O$ be the amounts taken. For the first two orders use
+\[
+ D_\pi=c^++\alpha x+\beta y
+       -\alpha r_A-\beta r_B-(\alpha+\beta)r_U;
+\]
+for the last two use
+\[
+ D_\pi=c^++\alpha x-\alpha r_A+\beta r_B-(\alpha-\beta)r_U.
+\]
+These formulas simply count spokes deleted when both types prefer the
+filled part, or when their preferred parts are opposite. The rounding
+argument of Lemma~\ref{lem:separable-cover} makes every such fractional
+balanced cut a cover bound. No optimal ordering claim is needed.
+Consequently $\tc(G)/k^2\leq D:=\min(D_0,D_1,D_\pi:\pi)$.
+We now strengthen $D$ by also taking the minimum with
+Lemma~\ref{lem:common-cut}'s unbalanced cover:
+\[
+ D_{\mathrm{common}}=c^++\alpha(x-1/2)+\beta(y-1/2)
+                   -\mu^2/4+\bigl((1+\mu)/2-w\bigr)_+^2.
+\]
+In all subsequent occurrences, $D$ includes this additional candidate.
+
+Define the relaxed outside bounds
+\begin{align*}
+ I&=\alpha(x-\rho)+\beta(y-\rho)
+       -\frac{\alpha\beta w(w-\rho)}{xy},\\
+ J&=\frac{\alpha x(x-\rho)+\beta y(y-\rho)
+                 -(\mu-y)_+w(w-\rho)}{y},\qquad X=\max(I,J),\\
+ A(r,z)&=\frac{(1-\rho)(1-2\rho)/3
+                    +r x(x-\rho)+z y(y-\rho)}{1+r+z},\\
+ P&=\max\left\{\frac{1-2\rho-3\rho^2}{3},\ X,\
+          \frac{1-2\rho}{6}+\frac{2X}{3},\
+          A(\alpha,\beta),A(\alpha,0),A(0,\beta)\right\}.
+\end{align*}
+Then $2\tp(G)/k^2\geq P$. To justify the two relaxations, the independent
+allocation expectation $r_S\binom s2+r_T\binom t2-r_Sr_T\binom u2$
+is increasing in each selection rate on $[0,1]^2$. Replacing
+$p/h(s),q/h(t)$ by $p/s,q/t$ therefore only decreases it. The coupled
+expectation, as a function of its palette size $H$, is
+\[
+ \frac{p\binom s2+q\binom t2-(p+q-H)_+\binom u2}{H}.
+\]
+It is decreasing on both sides of $H=p+q$, since on the lower side it
+equals $\binom u2+
+[p(\binom s2-\binom u2)+q(\binom t2-\binom u2)]/H$.
+Replacing $h(t)$ by $t$ is therefore valid. The other bounds are exactly
+the earlier clique, completion, and averaging estimates, without integer
+rounding.
+
+For the remaining large-core target, it suffices to establish $P\geq D$
+on the continuous domain
+\begin{gather*}
+ 1/4\leq x\leq y\leq1,\quad y\geq1/2,\quad
+ \max(0,x+y-1)\leq w\leq x,\quad 0\leq\rho\leq1/35,\\
+ \rho\leq\alpha\leq x,\quad\rho\leq\beta\leq y,
+ \qquad\alpha+\beta\geq1/3+\rho.
+\end{gather*}
+This continuous domain includes every integer instance not handled by the
+preceding analytic reductions, with
+$k\geq35$, using Theorem~\ref{thm:direct-regimes} and
+Corollary~\ref{cor:two-half}. It is larger than the integer domain, so a
+failure at a real point would not by itself refute the integer comparison.
+In particular, a complete interval subdivision would prove an unbounded
+statement; a partial subdivision would not.
+
+For exact interval evaluation it is better to cancel the common core
+term $c^+$ first. The four cut costs $D_\pi-c^+$ simplify, in the same
+order, to
+\begin{align*}
+ &\alpha(x-1/2)_+
+  +\beta\bigl(y-\min(w,1/2)-(1/2-x)_+\bigr)_+,\\
+ &\beta(y-1/2)+\alpha\bigl(x-\min(w,1/2)\bigr),\\
+ &\alpha(x-1/2)_+
+  +\beta\max\bigl(y-1/2,w-(x-1/2)_+\bigr),\\
+ &\beta(y-1/2)+\alpha(w-y+1/2)_+.
+\end{align*}
+These follow by filling the indicated regions; feasibility implies
+$x-w\leq1/2$, since $x\leq y$ and $x+y-w\leq1$.
+For clarity, these piecewise simplifications can be checked without
+trusting the interval program. Set $a=x-w$, $b=y-w$,
+$o=1-x-y+w$, and let $R=(1/2-x)_+$. In the first order,
+$r_U=\min(w,1/2)$, $r_A+r_U=\min(x,1/2)$, and
+$r_B=\min(b,R)$, which gives the first formula. In the second order,
+$U\cup B$ already fills the half-part because $y\geq1/2$; thus
+$r_A=0$ and $r_U+r_B=1/2$, giving the second formula.
+For the third order, $r_A=a$ and
+$r_U=w-(x-1/2)_+$. The remaining space before $O,B$ is $R$, so
+$r_B=(R-o)_+$. Hence
+\[
+ r_U+r_B=\max\{y-1/2,\ w-(x-1/2)_+\}.
+\]
+Indeed, if $R=0$ then $x\geq1/2$ and $r_U=w-x+1/2\geq y-1/2$
+by $x+y-w\leq1$; otherwise $r_U=w$ and $R-o=y-w-1/2$.
+For the fourth order, $A\cup O$ has size $1-y\leq1/2$.
+The available space for $U,B$ is $y-1/2$, so
+$r_U=\min(w,y-1/2)$ and $r_U+r_B=y-1/2$; the deleted $S$ mass is
+$w-r_U=(w-y+1/2)_+$. This gives the last formula.
+
+For the shadow cover the corresponding cost is
+$1/4-\rho^2/4-y(1-y)+w(x-w)$.
+For either outside estimate write $X_i=X_{i,0}-\rho X_{i,1}$,
+$i\in\{I,J\}$. Then its outside and completion gaps above $c^+$ are
+\[
+ X_{i,0}-\tfrac14+\rho(\tfrac12-X_{i,1})-\tfrac14\rho^2,
+ \qquad
+ -\tfrac1{12}+\tfrac23X_{i,0}
+ +\rho(\tfrac16-\tfrac23X_{i,1})-\tfrac14\rho^2.
+\]
+The clique gap is $1/12-\rho/6-5\rho^2/4$. For averaging,
+\[
+ A(r,z)-c^+=
+ \frac{\tfrac1{12}+r(x^2-\tfrac14)+z(y^2-\tfrac14)
+ +\rho[-\tfrac12+r(\tfrac12-x)+z(\tfrac12-y)]
+ +\rho^2[\tfrac5{12}-(r+z)/4]}{1+r+z}.
+\]
+This cancellation preserves the exact inequality and avoids charging
+twice for interval uncertainty in the same core term.
+
+\begin{lemma}[Exact interval certificate]\label{lem:interval-certificate}
+On the continuous domain displayed above, $P\geq D$, with the unbalanced
+common-neighborhood cover included in $D$.
+\end{lemma}
+\begin{proof}[Computer-assisted proof]
+The checker represents an interval as $[a/2^{40},b/2^{40}]$ with integer
+endpoints. Addition, multiplication, squaring and division by positive
+intervals round their lower endpoints down and upper endpoints up using
+integer arithmetic. The rules for minimum and maximum are their endpoint
+rules. Thus all enclosing intervals are rigorous; floating-point arithmetic
+is not used in any mathematical inequality.
+
+The root intervals enclose the displayed domain. Necessary inequalities
+$x\leq y$, $w\leq x$, $w\geq x+y-1$, $\rho\leq\alpha\leq x$,
+$\rho\leq\beta\leq y$, and $\mu\geq1/3+\rho$ contract a box without
+removing any feasible point. The non-dyadic root endpoint $1/35$ is
+rounded upwards and remains below $1/34$.
+
+For a leaf, the checker either verifies the sufficient inequality of
+Corollary~\ref{cor:common-cut}, or encloses all the packing gaps and cover
+costs above $c^+$. It accepts the leaf only when the maximum of the lower
+packing endpoints is at least the minimum of the upper cover endpoints.
+The auxiliary estimate $0\leq w(x-w)\leq x^2/4$ sharpens a cover interval.
+All these checks are sufficient for $P\geq D$ on the entire feasible
+part of the box. Otherwise a coordinate interval is bisected, and both
+children are retained.
+
+Four adjacent $x$ intervals partition the root domain. The completed
+forests have the following numbers of accepted leaves:
+\[
+\begin{array}{c|r}
+ x\text{ interval}&\text{accepted leaves}\\\hline
+ {[1/4,7/16]}&6\,537\\
+ {[7/16,5/8]}&149\,989\\
+ {[5/8,13/16]}&70\,801\\
+ {[13/16,1]}&837
+\end{array}
+\]
+All $228\,164$ leaves are accepted, with no unresolved leaf. The
+$456\,324$-node forests were saved and replayed: every split, domain
+contraction, and terminal inequality was checked again. The completed-square
+identity in Corollary~\ref{cor:common-cut} was also verified by exact
+rational polynomial arithmetic. Azure job \texttt{d5719db28c9b48f4}
+exited successfully and its returned sources and certificate digests
+matched. The four compressed trees, checker, symbolic check and reports
+are retained under
+\texttt{interval-unbalanced/azure/runs/d5719db28c9b48f4/}.
+The four root intervals cover the whole domain, and the finite trees
+cover their roots, proving the claimed inequality. This is an exact
+interval certificate for a continuous domain, not a sampling argument.
+A second implementation, Azure job \texttt{53fb6bee74b8468e}, subsequently
+rechecked all $456\,324$ nodes and $228\,164$ leaves. It imports none of the
+search program, reconstructs contractions by generic linear inequality
+projection, and evaluates the leaf bounds with $64$-bit dyadic outward
+precision. Sixteen rational polynomial identities check the link between
+the literal normalized bounds and their canceled forms. Truncated trees,
+unresolved nodes, invalid opcodes, false exclusions, a false root inequality,
+and a deliberately false polynomial identity were rejected. The separate
+source and report are retained under
+\texttt{certificate-audit/azure/runs/53fb6bee74b8468e/}.
+This verifies the scalar certificate by a second implementation. It is not
+an independent review of the graph lemmas and is not Lean verification.
+\end{proof}
+
+\begin{theorem}[Every large core with at most two types]
+\label{thm:two-types-large}
+Every split graph with a clique part of size $k\geq35$ and at most two
+active independent-side neighborhood types satisfies $\tc(G)\leq2\tp(G)$.
+\end{theorem}
+\begin{proof}
+Delete outside vertices of degree at most one, which participate in no
+triangle, and compress multiplicities by Theorem~\ref{thm:compression}.
+The clique and the one-type case follow from the preceding bounds,
+including Lemma~\ref{lem:single-type-certificate}. For two types, relabel
+so that $s\leq t$.
+If $s\leq k/4$ or $3(p+q)\leq k+3$, apply
+Theorem~\ref{thm:direct-regimes}. If $t\leq k/2$, apply
+Corollary~\ref{cor:two-half}. Every other instance normalizes to a point
+in the certified domain: compression ensures $p\leq s$, $q\leq t$,
+and the overlap inequalities are exactly set feasibility.
+The packing and cover bounds give
+\[
+ 2\tp(G)/k^2\geq P\geq D\geq\tc(G)/k^2.
+\]
+No upper bound on $k$ is involved.
+\end{proof}
+
+\begin{lemma}[Finite unequal-size remainder]\label{lem:unequal-finite}
+Every two-type instance with $k\leq34$ and unequal, crossing active
+neighborhoods satisfies Tuza's inequality.
+\end{lemma}
+\begin{proof}[Computer-assisted proof]
+Compress multiplicities and relabel the types so that $s<t$.
+Crossing means $S\setminus T$ and $T\setminus S$ are both nonempty.
+Thus all possibilities are included in the finite domain
+\[
+ 4\leq k\leq34,\quad 2\leq s<t\leq k-1,\quad
+ \max(0,s+t-k)\leq u\leq s-1,\quad
+ 1\leq p\leq h(s),\quad1\leq q\leq h(t).
+\]
+Azure job \texttt{9e59240ec1104f49} exhausted all $5\,102\,568$ tuples
+in this domain. The previously proved cover and packing bounds are
+evaluated by integer arithmetic: a cut gives an upper bound on $\tc$,
+and clique packing, independent/coupled colors, completion, and the
+three averaging bounds give lower bounds on $\tp$. For every tuple the
+cover bound is at most twice the packing bound. In fact the envelope
+comparison~\eqref{eq:direct-comparison} already passes every tuple;
+no improved unbalanced cover is needed in this finite range.
+Every $k=4,\ldots,34$ completed, the worker exited zero, and returned
+source hashes matched. The checker and per-core summaries are retained
+under \texttt{unequal-finite/azure/runs/9e59240ec1104f49/}.
+The ordered transcript digest is
+\begin{center}\small\ttfamily
+2839612bb9e3957b588eb2df902635b28\\
+027caa098eebdebda76f18c49b3bf14.
+\end{center}
+The domain exhausts all compressed unequal crossing cases, and the
+bounds are valid for every graph with the given parameters. Compression
+preserves both optima, so the conclusion also holds before compression.
+\end{proof}
+
+\begin{lemma}[Unified finite remainder]\label{lem:unified-finite}
+Every split graph with a clique part of size at most $34$ and at most
+two active outside neighborhood types satisfies $\tc(G)\leq2\tp(G)$.
+\end{lemma}
+\begin{proof}[Computer-assisted proof]
+For $k\leq1$ there is no triangle. Otherwise compress multiplicities
+using Theorem~\ref{thm:compression} and order the two neighborhood sizes.
+A fresh checker exhausts
+\[
+ 2\leq k\leq34,\quad 2\leq s\leq t\leq k,\quad
+ \max(0,s+t-k)\leq u\leq s,\quad
+ 1\leq p\leq h(s),\quad1\leq q\leq h(t),
+\]
+and also all one-type cases $2\leq s\leq k$, $0\leq p\leq h(s)$.
+The $p=0$ entries include the clique. The domain deliberately includes
+$S=T$ and nested sets, so no balancing reduction or threshold-graph
+theorem is required. Every graph in the stated class is represented;
+some degenerate graphs have more than one representation, which is harmless.
+
+For each tuple, compare twice the maximum of the proved clique, outside,
+completion, and three averaging bounds with the minimum of the separable
+cover bound (rounded down) and an explicitly enumerated shadow cut.
+The latter enumerates eight placements of the three non-$O$ regions
+and every integer split of $O$. Every candidate is a valid retained cut;
+no assertion of optimality or exact triangle-cover formula is needed.
+The checker imports neither of the previous finite checkers.
+The integer arithmetic comparison passed throughout:
+\[
+\begin{array}{l|r}
+ \text{parameter category}&\text{tuples checked}\\\hline
+ \text{one type or clique}&7\,378\\
+ \text{nested neighborhoods (including identical)}&1\,274\,881\\
+ \text{equal-size crossing neighborhoods}&668\,760\\
+ \text{unequal-size crossing neighborhoods}&5\,102\,568\\\hline
+ \text{total}&7\,053\,587
+\end{array}
+\]
+No tuple required the optional whole-graph cut fallback, and no tuple
+failed. All $k=2,\ldots,34$ completed. As a separate check of the
+implementation, direct exact optimization on $30$ small labeled graphs
+confirmed that the claimed packing bounds did not exceed the optimum and
+the cover bounds did not fall below it; these controls do not replace
+the general graph lemmas.
+
+Azure job \texttt{2a9f84bf04484c4e} exited zero, with source hashes verified.
+The source, per-$k$ transcript hashes, counts, and report are retained in
+\texttt{unified-finite/azure/runs/2a9f84bf04484c4e/}.
+Compression preserves both parameters, so the exhaustive compressed
+comparison proves the stated finite remainder.
+\end{proof}
+
+\section{Removing the exact clique-packing formula}
+The direct sum-coloring lemma gives the explicit clique lower bound
+\[
+ g(n)=\begin{cases}0,&n\leq2,\\
+ \left\lceil(n-1)(n-2)/6\right\rceil,&n\geq3.
+ \end{cases}
+\]
+The value $g(n)$ is a guaranteed packing size, not a claim about the
+optimum. In particular, for $k\geq3$,
+\[
+ 2\tp(K_k)\geq2g(k)\geq\frac{k^2-3k+2}{3}.
+\]
+For any nonempty finite graph $H$, the same lemma gives
+$\tp(H)\geq\lceil t(H)/|V(H)|\rceil$ directly.
+The stronger permutation-averaging bound in Lemma~\ref{lem:averaging}
+is not used in the final comparisons.
+
+\begin{lemma}[Analytic reductions using sums of labels]
+\label{lem:cyclic-reductions}
+Let $G$ have at most two active neighborhood types and $k\geq43$.
+Compress multiplicities, write $m=p+q$, and order $s\leq t$.
+Tuza's inequality follows from the sum-coloring packing bounds if there is at
+most one active type, or if any of the following holds:
+\[
+ s\leq k/4,\qquad 3m\leq k+5,\qquad t\leq k/2.
+\]
+\end{lemma}
+\begin{proof}
+First consider a single type of size $d$ with $r\leq h(d)$ centers.
+The local-color construction, greedy completion, and direct sum-coloring
+bound give
+\[
+ 2\tp(H)\geq\max\left\{2g(k),\ r(d-1),\
+ \frac{2c_k+2r(d-1)}3,\
+ \frac{k(k-1)(k-2)/3+rd(d-1)}{k+r}\right\}.
+\]
+We prove that this maximum is at least $c_k+r f_k(d)$.
+For $d\leq k/4$, the clique estimate suffices, since
+\[
+ 2g(k)-c_k\geq\frac{k^2-6k+5}{12}>0.
+\]
+For $k/4\leq d\leq3k/4$ and $r\geq(k+5)/3$, combine one quarter
+of the clique bound with three quarters of the completion bound. The
+margin over the separable cover is at least
+\[
+ \frac{g(k)-c_k}{2}+\frac{r(k-4)}8
+ \geq\frac{k-19}{24}>0.
+\]
+In the complementary range use the displayed algebraic identities for
+$F_d(m)$ and $P(k,m)$ in the proof of
+Lemma~\ref{lem:single-type-certificate}. The identities themselves make
+no use of a clique-packing theorem. The polynomial $P$ decreases in
+$m\geq0$, and its new endpoint is positive for $k\geq43$:
+\begin{align*}
+ 9P(k,(k+5)/3)&=8k^3-342k^2+93k-785\\
+ &=8h^3+690h^2+15057h+6912>0,\qquad h=k-43\geq0.
+\end{align*}
+Therefore $F_d(r)\geq0$ for $r\leq(k+5)/3$, proving the middle-degree
+case using the whole-graph sum-coloring bound. For $d\geq3k/4$, retain the elementary high-degree
+argument: the outside bound suffices when $r\geq(k+2)/2$, while the
+identity for $Q(k,r)$ and its positive endpoint prove the remaining
+range using that same bound. Neither of these high-degree steps uses the exact
+clique formula. Thus
+\[
+ 2\tp(H)\geq c_k+r f_k(d)
+\]
+holds for a single type, including zero multiplicity.
+
+For two types with $s\leq k/4$, the separable cover is at most
+$c_k+qf_k(t)$, which the just-proved single-type packing bound pays for.
+If $3m\leq k+5$ and $s,t>k/4$, average $F_s(m)$ and $F_t(m)$ with
+weights $p/m,q/m$. Both are nonnegative: use the new endpoint for $P$
+in the middle-degree range, and $m\leq(k+5)/3\leq(k+2)/2$ for $Q$
+in the high-degree range. This gives the required cover--packing
+comparison exactly as in the weighted calculation of
+Theorem~\ref{thm:direct-regimes}, using only the direct whole-graph bound.
+
+Finally, if $t\leq k/2$, the explicit shadow cut in
+Lemma~\ref{lem:unequal-shadow} gives $\tc(G)\leq c_k+k^2/16$, whereas
+\[
+ 2g(k)-c_k-k^2/16\geq\frac{k^2-24k+20}{48}>0
+ \qquad(k\geq43).
+\]
+This last comparison is another application of sum-coloring in a clique,
+with no exact optimum formula.
+\end{proof}
+
+\begin{lemma}[The cyclic continuous certificate]\label{lem:cyclic-interval}
+Retain the normalized cover bound $D$ and the outside, completion, and
+whole-graph bounds from Lemma~\ref{lem:interval-certificate}. Replace only
+the clique term in $P$ by $(1-\rho)(1-2\rho)/3$, and call the resulting
+maximum $P_{\mathrm{cyc}}$. Then $P_{\mathrm{cyc}}\geq D$ on
+\begin{gather*}
+ 1/4\leq x\leq y\leq1,\quad y\geq1/2,\quad
+ \max(0,x+y-1)\leq w\leq x,\quad 0\leq\rho\leq1/43,\\
+ \rho\leq\alpha\leq x,\quad \rho\leq\beta\leq y,\qquad
+ 3(\alpha+\beta)\geq1+5\rho.
+\end{gather*}
+Every packing term here follows without the exact clique-packing formula.
+\end{lemma}
+\begin{proof}[Computer-assisted proof]
+The clique term is precisely $(k-1)(k-2)/(3k^2)$, now supplied by
+Lemma~\ref{lem:sum-coloring}. The formerly averaged terms use only
+$\tp(H)\geq t(H)/|V(H)|$, supplied by the same direct lemma.
+Thus their numerical expressions are identical to those certified
+in this section; the new argument does not weaken a continuous bound.
+All outside and completion bounds are unchanged. After canceling
+$c^+=(1-\rho)^2/4$, the new clique gap is
+\[
+ \frac1{12}-\frac\rho2+\frac{5\rho^2}{12}.
+\]
+The sufficient common-neighborhood criterion remains valid, because its
+proof uses only $\tp(H)\geq t(H)/|V(H)|$ and $\rho\leq1/34$.
+
+A fresh exact interval run uses the new clique gap, the root endpoint
+$\rho\leq1/43$, and the new necessary inequality
+$3(\alpha+\beta)\geq1+5\rho$. Endpoints are dyadic multiples of
+$2^{-40}$. The new multiplicity contractions round lower endpoints down
+and upper endpoints up when dividing by $3$ or $5$. All other enclosing,
+bisection, and acceptance rules are as described in the earlier
+certificate proof. The resulting adjacent slabs are fully certified:
+\[
+\begin{array}{c|r}
+ x\text{ interval}&\text{accepted leaves}\\\hline
+ {[1/4,7/16]}&5\,604\\
+ {[7/16,5/8]}&116\,226\\
+ {[5/8,13/16]}&55\,861\\
+ {[13/16,1]}&815\\\hline
+ \text{total}&178\,506
+\end{array}
+\]
+All $357\,008$ nodes were replayed, with no unresolved leaf.
+The new clique-gap identity, the revised endpoint polynomial at $43$,
+and the two revised analytic margin identities were checked by exact
+rational polynomial arithmetic. Thus the calculation certifies the
+entire continuous domain and places no upper bound on $k$.
+
+Azure job \texttt{17ed3df4975c4594} returned these complete trees with
+matching source and certificate hashes. Sources and reports are retained
+under \texttt{cyclic-proof/azure/runs/17ed3df4975c4594/}.
+The earlier certificate is not used to certify the changed inequalities.
+A separate implementation in Azure job \texttt{93cea9de41fc4180}
+rechecked every new node and leaf with $64$-bit outward dyadic intervals
+and generic linear constraint projection. All passed. It also checked
+$16$ exact polynomial identities and rejected deliberately invalid trees
+and a false polynomial identity. This second implementation verifies the
+scalar certificate; it is not a Lean proof or an independent review of
+the graph-theoretic reductions.
+\end{proof}
+
+\begin{lemma}[The finite certificate using sum-coloring]\label{lem:cyclic-finite}
+Every split graph with at most two active neighborhood types and a clique
+part of size $k\leq42$ satisfies Tuza's inequality using sum-coloring
+and the elementary graph bounds in these notes.
+\end{lemma}
+\begin{proof}[Computer-assisted proof]
+For $k\leq1$ there is no triangle. Compress multiplicities and, for two
+types, order $s\leq t$. The finite domain is
+\[
+ 2\leq k\leq42,\quad 2\leq s\leq t\leq k,\quad
+ \max(0,s+t-k)\leq u\leq s,\quad
+ 1\leq p\leq h(s),\quad1\leq q\leq h(t),
+\]
+with the separate one-type cases $2\leq s\leq k$, $0\leq p\leq h(s)$.
+The clique itself contributes $g(k)$. For each of the three induced
+graphs with $(r,z)=(p,q),(p,0),(0,q)$, use the direct bound
+\[
+ \left\lceil\frac{\binom k3+r\binom s2+z\binom t2}{k+r+z}\right\rceil.
+\]
+This may be smaller than the earlier permutation-averaging bound, so
+the entire finite domain was checked afresh. The covers, local-color
+bounds, and greedy completion remain valid as before.
+The complete integer comparison passed in every category:
+\[
+\begin{array}{l|r}
+ \text{one type or clique}&13\,622\\
+ \text{nested neighborhoods (including identical)}&3\,591\,105\\
+ \text{equal-size crossing neighborhoods}&1\,920\,614\\
+ \text{unequal-size crossing neighborhoods}&18\,323\,030\\\hline
+ \text{total parameter tuples}&23\,848\,371
+\end{array}
+\]
+These are parameter representations, not a count of nonisomorphic graphs.
+In $60$ tuples the separable and shadow envelope alone was insufficient;
+an explicit whole-graph cut supplies the required cover. To construct
+that cut, assign the two outside types either the same side or opposite
+sides, order the core vertices by their spoke weights, and inspect every
+prefix length $j=0,\ldots,k$. Every prefix is a genuine bipartition;
+its deleted-edge count is
+\[
+ \binom k2-j(k-j)+p(s-\ell_S)+
+ \begin{cases}q(t-\ell_T),&\text{same outside side},\\
+ q\ell_T,&\text{opposite outside sides},\end{cases}
+\]
+where $\ell_S,\ell_T$ count neighbors in the prefix. Optimality of the
+ordering is unnecessary: any candidate whose cost is at most twice the
+packing lower bound suffices. No exact cover formula is used.
+
+Every $k=2,\ldots,42$ completed with no failed tuple in Azure job
+\texttt{86a6063f11ee4e5a}; the scalar scan took $31.37$ seconds. Its
+source, per-$k$ transcript digests, summaries, and all $60$ additional
+cut cases are retained under \texttt{lean-sum-coloring/azure/runs/}.
+For each extra case, a separate labeled-graph implementation saved
+the core partition and outside orientations, counted the deleted edges
+directly, and verified that every triangle met the cover. These explicit
+witnesses are retained with the new job as
+\texttt{fallback-covers.json}. The scalar source selects the $60$ cases;
+the labeled-graph check validates their cuts
+independently of its cost formula. This is not a reimplementation of all
+$23\,848\,371$ finite scalar comparisons. The earlier cyclic-bound run
+\texttt{17ed3df4975c4594}, its $38$ additional cuts, and their separate
+audit \texttt{93cea9de41fc4180} remain historical evidence for the previous
+stronger finite bounds; the present finite claim uses the new run.
+\end{proof}
+
+\begin{theorem}[Large cores from elementary packings]
+\label{thm:cyclic-large}
+Every split graph with at most two active neighborhood types and
+$k\geq43$ satisfies $\tc(G)\leq2\tp(G)$ without using the exact
+clique-packing formula.
+\end{theorem}
+\begin{proof}
+Compress the multiplicities. Apply Lemma~\ref{lem:cyclic-reductions} to
+its stated cases. Every remaining graph, after ordering $s\leq t$,
+normalizes to a point in the domain of Lemma~\ref{lem:cyclic-interval}.
+All normalized bounds follow from the explicit constructions, and
+\[
+ 2\tp(G)/k^2\geq P_{\mathrm{cyc}}\geq D\geq\tc(G)/k^2.
+\]
+This proves the result for every $k\geq43$ simultaneously.
+\end{proof}
+
+\begin{theorem}[At most two active neighborhood types]
+\label{thm:two-types-all}
+Let $G$ be a finite simple graph with a split partition
+$V(G)=C\mathbin{\dot\cup}I$. Suppose the vertices of $I$ having at least
+two neighbors in $C$ realize at most two distinct neighborhoods in $C$.
+Then
+\[
+ \boxed{\tc(G)\leq2\tp(G).}
+\]
+There is no restriction on $|C|$, the two neighborhood sizes, their
+intersection, or their multiplicities.
+\end{theorem}
+\begin{proof}
+Delete the outside vertices of degree at most one. For $k=|C|\leq42$,
+apply Lemma~\ref{lem:cyclic-finite}; for $k\geq43$, apply
+Theorem~\ref{thm:cyclic-large}. These alternatives exhaust the stated
+class. Both branches obtain their clique and whole-graph packing bounds
+from Lemma~\ref{lem:sum-coloring}, without an exact maximum-packing
+formula or permutation averaging.
+\end{proof}
+
+\section{Formal verification}
+Theorem~\ref{thm:two-types-all} is now fully formalized in Lean 4.34.0,
+with Mathlib pinned to revision \texttt{5ed296525643}.
+The public theorem is
+\texttt{TuzaTwoTypes.tuza\_of\_two\_active\_types} in
+\path{lean-finish-small/Result.lean}. Its only mathematical hypotheses specify
+a finite simple graph, a split partition, and at most two distinct active
+outside neighborhoods. There is no bound on the clique size, overlap,
+or multiplicities. The conclusion uses the actual optimal triangle
+edge-cover and triangle-packing numbers.
+
+The formal graph proof includes the packing and cover constructions,
+compression of both parameters, graph representation, removal of inactive
+vertices, rounding, all scalar bounds and the normalized-domain reductions.
+Its final route uses matching decompositions, explicit cuts, Mantel's
+bound through Mathlib's Tur\'an theorem, and sum-coloring of triangles.
+The exact clique-packing formula, threshold-graph theorem, exact cover
+formula and permutation averaging are not inputs to this route.
+
+The finite certificate covers all $23\,848\,371$ required compressed
+parameter tuples for $2\leq k\leq42$. Its $2326$ checked modules include
+the range-assembly proofs and the quantified final lemma. The continuous
+certificate has $178\,506$ leaves, divided into $347$ subtree modules,
+four root modules and one domain-coverage module, with additional helper
+modules bounding compiler memory. It proves the required
+inequality throughout the normalized real domain and therefore covers
+every $k\geq43$ simultaneously. The small-core cases are handled directly.
+
+Python generates candidate proof terms and transports certificate files;
+its output is not an axiom. Lean checks the arithmetic proofs with
+\texttt{decide +kernel}, as well as the interval soundness, range joins,
+domain coverage and final graph theorem. The project proof sources contain
+no \texttt{sorry}, \texttt{admit}, custom axioms, \texttt{unsafe},
+\texttt{native\_decide} or \texttt{implemented\_by}. The final theorem's
+reported axiom dependencies are exactly \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}.
+A deliberately false arithmetic proof was rejected.
+
+All compilation and certificate replay took place in bounded Azure jobs.
+The final verification report is retained at
+\path{lean-finish-small/azure/runs/fa2b8345ae1d465f/verification-report.json},
+with source hashes, compiled-object hashes, compiler logs and a separate
+resource-deletion report. Previously checked modules were reused only
+with matching source and object hashes and the same toolchain pins.
+This establishes the stated two-type subclass theorem; it does not resolve
+Tuza's conjecture for arbitrary graphs. No priority claim is made.
+
+The earlier sections also record the development of stronger bounds and
+exploratory computations. The following checks are historical context;
+the formal theorem above no longer depends on their Python success flags.
+
+\paragraph{Earlier exploratory checks.}
+The companion scripts check a fixed list of small witnesses, their cover
+counts, the allocation-bound arithmetic, and the exact polynomial identities
+in Theorem~\ref{thm:few-outside}. The new fixed checker verifies a $42$-triangle
+packing and a $75$-edge cover, and the moment formulas for two tiny color
+experiments (six and sixty assignments). These are bounded illustrations
+and negative controls, not computational verification of the general
+theorems. Two bounded Azure scalar searches were run: the first found the
+old-bound failure after $54\,646$ evaluations; the second found no failure
+of the strengthened comparison in $678\,730$ evaluations, consisting of a
+complete specified sweep for $9\leq k\leq24$ and $96$ seeded larger cases.
+The sweep uses crossing types, symmetry and the proved multiplicity caps;
+its exact domain is specified by the saved worker source. These searches
+do not verify all clique sizes or the written proofs. The fifth-gate checker
+adds two tiny coupled-color experiments (six and three assignments) and
+a fixed $61$-triangle packing with a $75$-edge cover. The fixed greedy
+completion and its triangle-free residue are checked directly. At that stage, no new
+Azure job or family enumeration was needed, and no Lean build was run.
+The sixth gate used a separate bounded Azure job for the finite remainder
+$k\leq34$ and six exact polynomial identities, as described above. This
+is an exhaustive remainder after a uniform theorem, unlike the earlier
+exploratory searches. Its separate runtime and cleanup reports are retained.
+The missing-edge allowance uses the established clique packing bound
+explicitly cited above; that design-theoretic ingredient is not proved
+afresh in these notes.
+
+\begin{thebibliography}{9}
+\bibitem{bonamy} M. Bonamy et al., \emph{Tuza's Conjecture for Threshold
+Graphs}, Discrete Mathematics \& Theoretical Computer Science 24(1), 2022.
+\url{https://arxiv.org/abs/2105.09871}.
+\bibitem{zeng} Z. Zeng, \emph{Tuza's Conjecture for Split Graphs with an
+Eight-Vertex Clique Part and Two Neighborhood Types}, preprint, 2026.
+\url{https://www.preprints.org/manuscript/202608.1304}.
+\bibitem{dense} L. Chahua and J. Guti\'errez,
+\emph{On Tuza's conjecture in dense graphs},
+Discrete Applied Mathematics 377 (2025), 225--233.
+\url{https://arxiv.org/abs/2405.11409}.
+\bibitem{mathlib-turan} Mathlib contributors, \emph{Tur\'an's theorem},
+\path{Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean},
+pinned revision \texttt{5ed296525643}.
+\url{https://github.com/leanprover-community/mathlib4/blob/5ed2965256430c3649e86755f9576b54eca72435/Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean}.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,35 @@
+name: Lean proof (Azure)
+run-name: Lean proof · ${{ github.sha }}
+on:
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: Label of the pre-provisioned ephemeral Azure runner
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: lean-public-build
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, x64, "${{ inputs.runner_label }}"]
+    timeout-minutes: 110
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Rebuild proofs and print axioms
+        run: python3 -u ci/build.py
+      - name: Preserve compiler records
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lean-verification-${{ github.sha }}
+          path: ci-output/
+          if-no-files-found: error
+          retention-days: 90

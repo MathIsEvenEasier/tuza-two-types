@@ -1,0 +1,137 @@
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:3:0: warning: 
+'Mathlib.Data.Real.Basic' has been deprecated: please replace this import by
+
+import Mathlib.Basic.Real.Basic
+'TuzaInterval.mul_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaInterval.inv_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaInterval.square_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaInterval.eval_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaInterval.eval_sound {n : ℕ} (box : Fin n → Interval) (x : Fin n → ℝ) (hx : ∀ (i : Fin n), Contains (box i) (x i))
+  (e : Expr n) (he : valid box e = true) : Contains (eval box e) (value x e)
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:271:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:283:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:295:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:307:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:355:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:367:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:379:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:391:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:403:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:415:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:427:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:439:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+'TuzaCertificate.contract_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificate.contract3_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificate.empty_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificate.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCertificate.check_sound (accept : Box → Bool) (P : Point → Prop)
+  (ha : ∀ (b : Box), accept b = true → ∀ (v : Point), Domain v → Mem b v → P v) (t : Tree) (b : Box)
+  (hc : check accept b t = true) (v : Point) : Domain v → Mem b v → P v
+'TuzaCertificateExpressions.nonnegative_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificateExpressions.compare_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificateExpressions.anyCompare_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificateExpressions.anyCover_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificateExpressions.accept_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCertificateExpressions.certificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCertificateExpressions.certificate_sound (t : TuzaCertificate.Tree) (b : Box) (h : check accept b t = true)
+  (v : Point) : Domain v → Mem b v → Conclusion v
+'TuzaGuided.select_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGuided.encloses_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGuided.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaGuided.check_sound (tree : Tree) (b : Box) (hc : check b tree = true) (v : Point) :
+  Domain v → Mem b v → Conclusion v
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:894:77: warning: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:894:77: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+'TuzaDyadic.floor_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadic.ceil_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadic.point_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadic.mul_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadic.inv_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadic.square_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadic.eval_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaDyadic.eval_sound {n : ℕ} (box : Fin n → Interval) (x : Fin n → ℝ) (hx : ∀ (i : Fin n), Contains (box i) (x i))
+  (e : Expr n) (he : valid box e = true) : Contains (eval box e) (value x e)
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1059:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1071:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1083:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1095:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1143:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1155:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1167:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1179:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1191:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1203:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1215:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/CertificateKernel.lean:1227:2: warning: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+'TuzaDyadicCertificate.scaled_domain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.contract_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.contract3_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaDyadicCertificate.contract3_sound (b : Box) (v : Point) (hd : TuzaCertificate.Domain v) (h : Mem b v) :
+  Mem (contract3 b) v
+'TuzaDyadicCertificate.nonnegative_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.compare_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.select_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.encloses_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaDyadicCertificate.split_join' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaDyadicCertificate.split_join (b c lb rb : Box) (i : Fin 6) (m : ℤ) (hc : encloses c (contract3 b) = true)
+  (hl : encloses lb (lower c i m) = true) (hr : encloses rb (raise c i m) = true)
+  (left : ∀ (v : TuzaCertificate.Point), TuzaCertificate.Domain v → Mem lb v → Conclusion v)
+  (right : ∀ (v : TuzaCertificate.Point), TuzaCertificate.Domain v → Mem rb v → Conclusion v)
+  (v : TuzaCertificate.Point) : TuzaCertificate.Domain v → Mem b v → Conclusion v
+'TuzaTraceCertificate.step_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaTraceCertificate.run_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaTraceCertificate.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaTraceCertificate.split_join' depends on axioms: [propext, Classical.choice, Quot.sound]

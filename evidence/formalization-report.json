@@ -1,0 +1,94 @@
+{
+  "status": "VERIFIED",
+  "date": "2026-10-08",
+  "attribution": "OpenAI Codex (GPT-6 Astra)",
+  "theorem": "TuzaTwoTypes.tuza_of_two_active_types",
+  "statement": "Tuza inequality for all finite split graphs with at most two active outside-neighborhood types",
+  "full_stated_theorem_verified": true,
+  "general_tuza_resolved": false,
+  "lean": "4.34.0",
+  "mathlib": "5ed2965256430c3649e86755f9576b54eca72435",
+  "lean_release_sha256": "caaa98356098c85dc0fcbbd28e1ec66f39eb6551829972b752ff20e1286b646b",
+  "axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "negative_control_rejected": true,
+  "module_builds": [
+    {
+      "module": "GraphReductions",
+      "exit_code": 0,
+      "seconds": 56.051,
+      "source_sha256": "c50fabd01e91d5d19a74ff650f782f8b0493fb0294e2cf19d8416a279d29d322",
+      "olean_sha256": "4d3e1b557729119fb1f09b8f95ebcf34433cf7f67c21c272ebbac229b06f8ad1"
+    },
+    {
+      "module": "CertificateKernel",
+      "exit_code": 0,
+      "seconds": 5.68,
+      "source_sha256": "6c79b473e3ddc09e7ef8ad23199dd7fbe73abbce00894249e557ab62010042b8",
+      "olean_sha256": "3ac2e676257ef19e6e003fa09b994a083b85cddddaf5e0223b8c1c06905d08f0"
+    },
+    {
+      "module": "NormalizedBounds",
+      "exit_code": 0,
+      "seconds": 8.848,
+      "source_sha256": "7f3403886b73547feb0fff9ecb9f3c5d88c417f2df6c12a9dfe4aea60e4489ce",
+      "olean_sha256": "fb1d85d28ab0c54f2c62f6538aab0ec593f3140fea643fbaa5400f480b4ba898"
+    },
+    {
+      "module": "Result",
+      "exit_code": 0,
+      "seconds": 2.699,
+      "source_sha256": "206ac5b58a1b1dc793e02c8a480a74e5b847a48a3f0a3dc82ce61c94e001f4e2",
+      "olean_sha256": "1f73e6173547679d8f32b416efabadd740cd1c943804851636aa41cf5a089314"
+    }
+  ],
+  "finite_certificate": {
+    "job_id": "97b6caeaaae24e24",
+    "complete": true,
+    "cases": 23848371,
+    "modules": 2326,
+    "clique_sizes": [
+      2,
+      42
+    ]
+  },
+  "interval_certificate": {
+    "job_id": "fa2b8345ae1d465f",
+    "complete": true,
+    "leaves": 178506,
+    "parent_subtree_modules": 347,
+    "root_modules": 4,
+    "helper_leaf_cap": 256,
+    "helper_modules": 508,
+    "total_modules": 860,
+    "domain_coverage_modules": 1,
+    "covers_every_clique_size_at_least": 43
+  },
+  "verification_report": "evidence/verification-report.json",
+  "cleanup_report": "evidence/cleanup-report.json",
+  "cleanup": {
+    "checked_at": "2026-10-08T01:34:55Z",
+    "group_exists": {
+      "compute": false,
+      "control": false
+    },
+    "resource_ids": [],
+    "all_deleted": true
+  },
+  "independent_cleanup_confirmation": {
+    "current_task_vms": [],
+    "group_exists": {
+      "mie-fa2b8345ae1d465f-compute": false,
+      "mie-fa2b8345ae1d465f-control": false
+    },
+    "remaining_resource_ids": [],
+    "all_deleted": true
+  },
+  "complete_certificate_manifests": [
+    "evidence/finite-original-manifest.json",
+    "evidence/interval-original-manifest.json"
+  ]
+}

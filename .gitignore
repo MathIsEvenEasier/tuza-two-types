@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+.downloads/
+ci-output/
+ci/azure/runs/
+*.olean

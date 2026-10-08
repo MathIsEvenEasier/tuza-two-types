@@ -1,0 +1,7 @@
+/opt/tuza-independent-allocation-job/source/NegativeControl.lean:1:0: warning: 
+'Mathlib.Data.Real.Basic' has been deprecated: please replace this import by
+
+import Mathlib.Basic.Real.Basic
+/opt/tuza-independent-allocation-job/source/NegativeControl.lean:2:28: error: Tactic `decide` proved that the proposition
+  1 = 0
+is false

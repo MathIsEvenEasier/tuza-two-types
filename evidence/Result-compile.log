@@ -1,0 +1,4 @@
+'TuzaTwoTypes.tuza_of_two_active_types' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaTwoTypes.tuza_of_two_active_types.{u_1} {V : Type u_1} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+  (K : Finset V) (hK : G.IsClique ↑K) (hI : ∀ a ∉ K, ∀ b ∉ K, ¬G.Adj a b) (htypes : #(activeTypes G K) ≤ 2) :
+  coverNumber G ≤ 2 * packingNumber G

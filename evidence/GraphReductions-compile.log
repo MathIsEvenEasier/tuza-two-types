@@ -1,0 +1,703 @@
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4:0: warning: 
+'Mathlib.Data.Real.Basic' has been deprecated: please replace this import by
+
+import Mathlib.Basic.Real.Basic
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:91:7: warning: Variable name `a` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _a
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:91:9: warning: Variable name `b` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _b
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:92:9: warning: Variable name `a` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _a
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:92:11: warning: Variable name `b` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _b
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:92:13: warning: Variable name `c` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _c
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:103:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:110:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:260:2: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaCompression.complete_graph_coloring' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCompression.centered_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCompression.centered_packing.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (hs : 2 ≤ Fintype.card V)
+  (J : Finset (Finset V)) (hJ : ∀ e ∈ J, #e = 2) :
+  ∃ P,
+    #P = #J ∧
+      (∀ t ∈ P, #t = 3) ∧
+        ((↑P).PairwiseDisjoint fun t => powersetCard 2 t) ∧ ∀ e ∈ J, ∃ c, insert (Sum.inr c) (lift e) ∈ P
+'TuzaCompression.preserve_old_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:437:2: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaCompression.recolor_on_neighborhood' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCompression.recolor_on_neighborhood.{u_1} {V : Type u_1} [DecidableEq V] (S : Finset V) (hs : 2 ≤ #S)
+  (Q J : Finset (Finset V)) (hQcard : ∀ t ∈ Q, #t = 3) (hQ : (↑Q).PairwiseDisjoint fun t => powersetCard 2 t)
+  (hJ : ∀ e ∈ J, #e = 2) (hJS : ∀ e ∈ J, e ⊆ S) (havoid : ∀ e ∈ J, ∀ t ∈ Q, ¬e ⊆ t) :
+  ∃ P,
+    #P = #Q + #J ∧
+      (∀ t ∈ P, #t = 3) ∧
+        ((↑P).PairwiseDisjoint fun t => powersetCard 2 t) ∧
+          (∀ t ∈ Q, lift t ∈ P) ∧ ∀ e ∈ J, ∃ c, insert (Sum.inr c) (lift e) ∈ P
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:492:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.right_card_le_one`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:501:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.left_isClique`:
+  [DecidableEq V]
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:514:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.left_card_old`:
+  [DecidableEq V]
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:527:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.left_subset_neighborhood`:
+  [DecidableEq V]
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:636:2: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaGraphCompression.extract_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphCompression.compress_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaGraphCompression.compress_packing.{u_1, u_2} {V : Type u_1} {C : Type u_2} [DecidableEq V] [DecidableEq C]
+  (H : SimpleGraph V) (S : Finset V) (hs : 2 ≤ #S) (P : Finset (Finset (V ⊕ C))) (hP : IsPacking (attached H S C) P) :
+  ∃ R, IsPacking (attached H S (Fin (colorCount #S))) R ∧ #R = #P
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:726:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.image_injective`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:793:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.centerMap_injective`:
+  [DecidableEq V]
+  [DecidableEq C]
+  [DecidableEq D]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] [DecidableEq D] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:806:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.centerMap_adj`:
+  [DecidableEq V]
+  [DecidableEq C]
+  [DecidableEq D]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] [DecidableEq D] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:845:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphCompression.packingNumber_spec`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaGraphCompression.map_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphCompression.packing_sizes_attached_min' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphCompression.packingNumber_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphCompression.packingNumber_attached_min' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaGraphCompression.packingNumber_attached_min.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (H : SimpleGraph V)
+  (S : Finset V) (hs : 2 ≤ #S) (m : ℕ) :
+  packingNumber (attached H S (Fin m)) = packingNumber (attached H S (Fin (min m (colorCount #S))))
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1003:26: warning: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1003:39: warning: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1031:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaMatchingClasses.matching_card_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaMatchingClasses.palette_capacity' depends on axioms: [propext, Quot.sound]
+'TuzaMatchingClasses.uniform_class_size' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaMatchingClasses.selected_edges_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaMatchingClasses.palette_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaMatchingClasses.clique_neighborhood_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaMatchingClasses.clique_neighborhood_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaMatchingClasses.clique_neighborhood_packing.{u_1} {V : Type u_1} [DecidableEq V] (H : SimpleGraph V) (S : Finset V)
+  (hs : 2 ≤ #S) (hS : H.IsClique ↑S) (m : ℕ) :
+  ∃ P, IsPacking (attached H S (Fin m)) P ∧ #P = min m (colorCount #S) * (#S / 2) ∧ ∀ t ∈ P, t.toRight.Nonempty
+TuzaMatchingClasses.clique_neighborhood_lower_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (H : SimpleGraph V)
+  (S : Finset V) (hs : 2 ≤ #S) (hS : H.IsClique ↑S) (m : ℕ) :
+  min m (colorCount #S) * (#S / 2) ≤ packingNumber (attached H S (Fin m))
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1146:0: warning: automatically included section variable(s) unused in theorem `TuzaIndependentAllocation.choose_colors`:
+  [DecidableEq α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1233:0: warning: automatically included section variable(s) unused in theorem `TuzaIndependentAllocation.embed_palette`:
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1335:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaIndependentAllocation.ordered_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaIndependentAllocation.weighted_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaIndependentAllocation.choose_colors' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaIndependentAllocation.select_two_palettes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaIndependentAllocation.merge_palettes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaIndependentAllocation.independent_allocation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaIndependentAllocation.independent_allocation_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaIndependentAllocation.independent_allocation_bound.{u_2} {V : Type u_2} [DecidableEq V] [Fintype V]
+  (H : SimpleGraph V) (S T : Finset V) (hs : 2 ≤ #S) (ht : 2 ≤ #T) (hS : H.IsClique ↑S) (hT : H.IsClique ↑T) (m n : ℕ) :
+  colorCount #T * min m (colorCount #S) * (#S).choose 2 + colorCount #S * min n (colorCount #T) * (#T).choose 2 ≤
+    colorCount #S * colorCount #T * packingNumber (twoAttached H S T (Fin m) (Fin n)) +
+      min m (colorCount #S) * min n (colorCount #T) * (#(S ∩ T)).choose 2
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1440:0: warning: automatically included section variable(s) unused in theorem `TuzaCoupledAllocation.pullback_proper`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1474:2: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1550:15: warning: This simp argument is unused:
+  and_assoc
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [shift]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1689:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1696:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1707:36: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1708:10: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+'TuzaCoupledAllocation.common_labels' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.coherent_coloring' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.minimal_palettes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.shift_total' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.select_coupled' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.merge_general' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.coupled_allocation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoupledAllocation.coupled_allocation_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCoupledAllocation.coupled_allocation_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (H : SimpleGraph V)
+  (S T : Finset V) (hs : 2 ≤ #S) (ht : 2 ≤ #T) (hS : H.IsClique ↑S) (hT : H.IsClique ↑T) (m n : ℕ) :
+  min m (colorCount (max (#S) #T)) * (#S).choose 2 + min n (colorCount (max (#S) #T)) * (#T).choose 2 ≤
+    colorCount (max (#S) #T) * packingNumber (twoAttached H S T (Fin m) (Fin n)) +
+      (min m (colorCount (max (#S) #T)) + min n (colorCount (max (#S) #T)) - colorCount (max (#S) #T)) *
+        (#(S ∩ T)).choose 2
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1790:6: warning: Unused tactic linter: `change s(a, b) ∈ G.edgeFinset` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:1887:0: warning: automatically included section variable(s) unused in theorem `TuzaCoreCompletion.centered_left_card`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaCoreCompletion.mantel_family' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoreCompletion.residual_triangle_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoreCompletion.residual_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoreCompletion.centered_left_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoreCompletion.core_completion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoreCompletion.core_completion_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoreCompletion.two_type_completion' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCoreCompletion.core_completion.{u_1, u_2} {V : Type u_1} {C : Type u_2} [DecidableEq V] [DecidableEq C] [Fintype V]
+  (G : SimpleGraph (V ⊕ C)) (hcore : ∀ (a b : V), a ≠ b → G.Adj (Sum.inl a) (Sum.inl b))
+  (hind : ∀ (c d : C), ¬G.Adj (Sum.inr c) (Sum.inr d)) (P : Finset (Finset (V ⊕ C))) (hP : IsPacking G P)
+  (hout : ∀ t ∈ P, t.toRight.Nonempty) :
+  ∃ R, IsPacking G R ∧ P ⊆ R ∧ 2 * #P + (Fintype.card V).choose 2 ≤ 3 * #R + Fintype.card V ^ 2 / 4
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2118:0: warning: automatically included section variable(s) unused in theorem `TuzaCoverCompression.left_clique`:
+  [DecidableEq V]
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2212:4: warning: Try `simp at hh` instead of `simpa using hh`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2296:2: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaCoverCompression.edge_cover_cost' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoverCompression.replace_spokes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoverCompression.extend_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2316:0: warning: automatically included section variable(s) unused in theorem `TuzaCoverCompression.image_clique`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaCoverCompression.pullback_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoverCompression.coverBudget_attached_min' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoverCompression.coverNumber_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoverCompression.coverNumber_attached_min' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCoverCompression.both_parameters_attached_min' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCoverCompression.both_parameters_attached_min.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (H : SimpleGraph V)
+  (S : Finset V) (hs : 2 ≤ #S) (m : ℕ) :
+  packingNumber (attached H S (Fin m)) = packingNumber (attached H S (Fin (min m (colorCount #S)))) ∧
+    coverNumber (attached H S (Fin m)) = coverNumber (attached H S (Fin (min m (colorCount #S))))
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2534:4: warning: Try `simp at hh` instead of `simpa using hh`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2628:0: warning: automatically included section variable(s) unused in theorem `TuzaCutCovers.splitGraph_twoAttached`:
+  [DecidableEq V]
+  [DecidableEq C]
+  [DecidableEq D]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] [DecidableEq D] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaCutCovers.coreEdges_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.spokeEdges_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.cutEdges_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.cover_of_same_color' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.cutEdges_isCover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.explicit_cut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.two_type_cut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.two_type_cover_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutCovers.common_cut_size' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCutCovers.two_type_cover_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (A S T : Finset V) (m n : ℕ) :
+  coverNumber (twoAttached ⊤ S T (Fin m) (Fin n)) ≤
+    (#A).choose 2 + (Fintype.card V - #A).choose 2 + m * min (#(S ∩ A)) #(S \ A) + n * min (#(T ∩ A)) #(T \ A)
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2704:15: warning: This simp argument is unused:
+  Nat.succ_eq_add_one
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [hc, Nat.cast_add, Nat.cast_one, ih]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'TuzaCommonRounding.choose_two_real' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.commonCost_real' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.rounded_quadratic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.rounded_integer_min' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.common_cut_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.common_cover_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.clipped_square' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCommonRounding.common_cover_optimized' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCommonRounding.common_cover_optimized.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q : ℕ) :
+  ↑(coverNumber (twoAttached ⊤ S T (Fin p) (Fin q))) ≤
+    ↑((Fintype.card V).choose 2) + ↑p * ↑(#S) + ↑q * ↑(#T) - (↑(Fintype.card V) + ↑p + ↑q) ^ 2 / 4 +
+        max 0 ((↑(Fintype.card V) + ↑p + ↑q) / 2 - ↑(#(S ∩ T))) ^ 2 +
+      1 / 4
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2898:17: warning: `if_pos` has been deprecated: Use `ite_eq_left` instead
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:2900:17: warning: `if_neg` has been deprecated: Use `ite_eq_right` instead
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3017:0: warning: automatically included section variable(s) unused in theorem `TuzaBalancedRounding.fractionalSpokes_affine`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3019:51: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+'TuzaBalancedRounding.real_ordered_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.threshold_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.balanced_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.half_product' depends on axioms: [propext, Quot.sound]
+'TuzaBalancedRounding.balanced_core_cost' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.spokes_indicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.spoke_cost_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.balanced_cut_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaBalancedRounding.balanced_cover_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaBalancedRounding.balanced_cover_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q : ℕ)
+  (b d : Bool) (x : V → ℝ) (hx : ∀ (v : V), 0 ≤ x v ∧ x v ≤ 1) (hmass : ∑ v, x v = ↑(Fintype.card V) / 2) :
+  ↑(coverNumber (twoAttached ⊤ S T (Fin p) (Fin q))) ≤
+    ↑(coreBudget (Fintype.card V)) + ↑p * fractionalSpokes S b x + ↑q * fractionalSpokes T d x
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3168:18: warning: This simp argument is unused:
+  mul_comm
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [size]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3187:4: warning: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+'TuzaSumColoring.graph_triangle_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSumColoring.family_packing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSumColoring.clique_packing_via_colors' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaSumColoring.graph_triangle_packing.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (H : SimpleGraph V)
+  [DecidableRel H.Adj] :
+  ∃ P,
+    (∀ t ∈ P, H.IsNClique 3 t) ∧
+      ((↑P).PairwiseDisjoint fun t => powersetCard 2 t) ∧ #(H.cliqueFinset 3) ≤ Fintype.card V * #P
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3331:27: warning: Try `simp at h` instead of `simpa using h`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3334:17: warning: Try `simp at h` instead of `simpa using h`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3335:41: warning: Try `simp at h` instead of `simpa using h`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3335:41: warning: Try `simp at h` instead of `simpa using h`
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+'TuzaGraphBounds.triangleFamily_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphBounds.triangleFamily_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphBounds.triangle_count_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphBounds.two_type_monotone' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphBounds.subgraph_triangle_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaGraphBounds.subgraph_triangle_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (r z p q : ℕ)
+  (hr : r ≤ p) (hz : z ≤ q) :
+  (Fintype.card V).choose 3 + r * (#S).choose 2 + z * (#T).choose 2 ≤
+    (Fintype.card V + r + z) * packingNumber (twoAttached ⊤ S T (Fin p) (Fin q))
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3396:8: warning: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3396:8: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+'TuzaRealBounds.rate_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRealBounds.independent_relaxation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRealBounds.coupled_relaxation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRealBounds.palette_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRealBounds.palette_mono' depends on axioms: [propext, Quot.sound]
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:3534:0: warning: automatically included section variable(s) unused in theorem `TuzaSeparableCover.fill_between`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaSeparableCover.regions_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.fill_between' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.opposite_masses' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.same_masses' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.fractional_cut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.penalty_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.penalty_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaSeparableCover.separable_cover_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaSeparableCover.separable_cover_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q : ℕ) :
+  ↑(coverNumber (twoAttached ⊤ S T (Fin p) (Fin q))) ≤
+    ↑(coreBudget (Fintype.card V)) + ↑p * penalty ↑(Fintype.card V) ↑(#S) + ↑q * penalty ↑(Fintype.card V) ↑(#T)
+'TuzaFractionalOrders.four_regions_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFractionalOrders.four_region_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFractionalOrders.greedy_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaShadowCovers.pairOf_injOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaShadowCovers.lifted_core_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaShadowCovers.shadow_isCover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaShadowCovers.shadowCore_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaShadowCovers.shadow_cover_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaShadowCovers.shadow_cover_bound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (A S T : Finset V) (p q : ℕ) :
+  coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)) ≤
+    shadowCost (Fintype.card V) (#A) (#(A ∩ S)) (#(univ \ A ∩ S)) (#(A ∩ T)) (#(univ \ A ∩ T)) (#(A ∩ (S ∩ T)))
+      #(univ \ A ∩ (S ∩ T))
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4082:30: warning: Variable name `s` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _s
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+'TuzaCutFormulas.order_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutFormulas.order_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutFormulas.order_three' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutFormulas.order_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutFormulas.geometry_of_sets' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutFormulas.feasible_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaCutFormulas.four_balanced_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaCutFormulas.four_balanced_bounds.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q : ℕ)
+  (hst : #S ≤ #T) (ht : ↑(Fintype.card V) / 2 ≤ ↑(#T)) :
+  have k := ↑(Fintype.card V);
+  have s := ↑(#S);
+  have t := ↑(#T);
+  have u := ↑(#(S ∩ T));
+  have c := ↑(coreBudget (Fintype.card V));
+  have tau := ↑(coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)));
+  tau ≤ c + costOne k s t u ↑p ↑q ∧
+    tau ≤ c + costTwo k s t u ↑p ↑q ∧ tau ≤ c + costThree k s t u ↑p ↑q ∧ tau ≤ c + costFour k s t u ↑p ↑q
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4127:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphTransfer.map_cover`:
+  [Fintype V]
+  [Fintype W]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype V] [Fintype W] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4157:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphTransfer.iso_triangles`:
+  [Fintype V]
+  [Fintype W]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype V] [Fintype W] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4189:0: warning: automatically included section variable(s) unused in theorem `TuzaGraphTransfer.nested_adjacency`:
+  [Fintype V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaGraphTransfer.map_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphTransfer.tuza_transfer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphTransfer.iso_parameters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphTransfer.nested_parameters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphTransfer.compress_second_type' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphTransfer.swap_types' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphTransfer.compress_both_types' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaGraphTransfer.compress_both_types.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (hs : 2 ≤ #S)
+  (ht : 2 ≤ #T) (p q : ℕ) :
+  packingNumber (twoAttached ⊤ S T (Fin p) (Fin q)) =
+      packingNumber (twoAttached ⊤ S T (Fin (min p (colorCount #S))) (Fin (min q (colorCount #T)))) ∧
+    coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)) =
+      coverNumber (twoAttached ⊤ S T (Fin (min p (colorCount #S))) (Fin (min q (colorCount #T))))
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4280:0: warning: automatically included section variable(s) unused in theorem `TuzaPackingInterfaces.choose_inter_bounds`:
+  [Fintype V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaPackingInterfaces.choose_inter_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaPackingInterfaces.cast_sub_max' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaPackingInterfaces.independent_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaPackingInterfaces.coupled_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaPackingInterfaces.outside_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaPackingInterfaces.outside_and_completion' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaPackingInterfaces.outside_and_completion.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V)
+  (hs : 2 ≤ #S) (ht : 2 ≤ #T) (hst : #S ≤ #T) (p q : ℕ) (hp : p ≤ colorCount #S) (hq : q ≤ colorCount #T) :
+  have L := max (independentRate (#S) (#T) (#(S ∩ T)) p q) (coupledRate (#S) (#T) (#(S ∩ T)) p q);
+  have nu := packingNumber (twoAttached ⊤ S T (Fin p) (Fin q));
+  L ≤ ↑nu ∧ 2 * L + ↑((Fintype.card V).choose 2) ≤ 3 * ↑nu + ↑(Fintype.card V ^ 2 / 4)
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4532:49: warning: Unused tactic linter: `tauto` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4532:49: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4531:49: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4533:51: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4534:58: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+'TuzaRegionCuts.core_floor_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.small_shadow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.shadow_balance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.integer_region_cut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.large_shadow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.disjoint_regions' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.realize_regions' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRegionCuts.integer_region_shadow' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaRegionCuts.integer_region_shadow.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q a b c d : ℕ)
+  (ha : a ≤ #(S \ T)) (hb : b ≤ #(T \ S)) (hc : c ≤ #(S ∩ T)) (hd : d ≤ #(outside S T)) :
+  coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)) ≤
+    shadowCost (Fintype.card V) (a + b + c + d) (a + c) (#S - (a + c)) (b + c) (#T - (b + c)) c (#(S ∩ T) - c)
+'TuzaAnalytic.P_positive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaAnalytic.Q_positive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaAnalytic.small_mass_F' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaAnalytic.single_type' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaAnalytic.small_total_mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaAnalytic.small_total_mass (k s t p q c v : ℝ) (hk : 43 ≤ k) (hs : k / 4 ≤ s) (ht : k / 4 ≤ t) (hp : 0 ≤ p)
+  (hq : 0 ≤ q) (hm : 3 * (p + q) ≤ k + 5) (hc : c ≤ (k - 1) ^ 2 / 4)
+  (hall : k * (k - 1) * (k - 2) / 3 + p * s * (s - 1) + q * t * (t - 1) ≤ (k + p + q) * v) :
+  c + p * penalty k s + q * penalty k t ≤ v
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4803:0: warning: automatically included section variable(s) unused in theorem `TuzaFiniteInterfaces.independent_integer_witness`:
+  [Fintype V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4815:0: warning: automatically included section variable(s) unused in theorem `TuzaFiniteInterfaces.coupled_integer_witness`:
+  [Fintype V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaFiniteInterfaces.ceilDiv_le' depends on axioms: [propext, Quot.sound]
+'TuzaFiniteInterfaces.integer_outside_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteInterfaces.packingLower_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteInterfaces.penalty8_real' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteInterfaces.separableUpper_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaFiniteInterfaces.separableUpper_sound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q : ℕ) :
+  coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)) ≤ separableUpper (Fintype.card V) (#S) (#T) p q
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:4932:0: warning: automatically included section variable(s) unused in theorem `TuzaRepresentation.triangle_preimage`:
+  [DecidableEq V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:5002:0: warning: automatically included section variable(s) unused in theorem `TuzaRepresentation.typeMap_injective`:
+  [DecidableEq V]
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:5031:0: warning: automatically included section variable(s) unused in theorem `TuzaRepresentation.typeMap_adjacency`:
+  [DecidableEq V]
+  [DecidableEq C]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [DecidableEq V] [DecidableEq C] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+'TuzaRepresentation.finite_centers' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRepresentation.split_from_fin' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRepresentation.triangle_preimage' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRepresentation.partition_adjacency' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRepresentation.typeMap_injective' depends on axioms: [propext, Quot.sound]
+'TuzaRepresentation.typeMap_adjacency' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRepresentation.triangle_in_active_range' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaRepresentation.remove_inactive' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaRepresentation.remove_inactive.{u_1, u_3} {V : Type u_1} {C : Type u_3} [DecidableEq V] [DecidableEq C] [Fintype V]
+  [Fintype C] (N : C → Finset V) (S T : Finset V) (htypes : ∀ (c : C), 2 ≤ #(N c) → N c = S ∨ N c = T)
+  (hTuza :
+    coverNumber (twoAttached ⊤ S T (First N S) (Second N S T)) ≤
+      2 * packingNumber (twoAttached ⊤ S T (First N S) (Second N S T))) :
+  coverNumber (splitGraph N) ≤ 2 * packingNumber (splitGraph N)
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:5141:15: warning: This simp argument is unused:
+  Nat.succ_eq_add_one
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [hc, Nat.cast_add, Nat.cast_one, choose_two_real, ih]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:5195:6: warning: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/tuza-lean-cache/mathlib/GraphReductions.lean:5195:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+'TuzaGraphReductions.small_both_neighborhoods' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.zero_second_type' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.choose_three_real' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.coreBudget_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.clique_real' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.all_triangles_real' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.single_type_graph' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.small_neighborhood' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaGraphReductions.small_multiplicity' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaGraphReductions.small_multiplicity.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (p q : ℕ)
+  (hk : 43 ≤ Fintype.card V) (hs : ↑(Fintype.card V) / 4 ≤ ↑(#S)) (ht : ↑(Fintype.card V) / 4 ≤ ↑(#T))
+  (hm : 3 * (p + q) ≤ Fintype.card V + 5) :
+  coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)) ≤ 2 * packingNumber (twoAttached ⊤ S T (Fin p) (Fin q))
+'TuzaNormalizedScalar.common_margin' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaNormalizedScalar.common_criterion' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaNormalizedScalar.common_criterion (x y p q r e tau v : ℝ) (hp : 0 ≤ p) (hq : 0 ≤ q) (hm : p + q ≤ 2)
+  (hr : 0 ≤ r ∧ r ≤ 1 / 34) (hcriterion : (1 + 3 * (p + q) ^ 2) / 16 - (1 + p + q) * e ^ 2 ≥ 0)
+  (hcover : tau ≤ (1 - r) ^ 2 / 4 + p * x + q * y - (p + q) / 2 - (p + q) ^ 2 / 4 + e ^ 2)
+  (hpacking : (1 - r) * (1 - 2 * r) / 3 + p * x * (x - r) + q * y * (y - r) ≤ (1 + p + q) * v) : tau ≤ v
+'TuzaFiniteCertificate.outside_card_nat' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteCertificate.feasible_sets' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteCertificate.witness_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaFiniteCertificate.witness_sound.{u_1} {V : Type u_1} [DecidableEq V] [Fintype V] (S T : Finset V) (hs : 2 ≤ #S)
+  (ht : 2 ≤ #T) (hst : #S ≤ #T) (p q : ℕ) (hp : p ≤ colorCount #S) (hq : q ≤ colorCount #T) (w : Witness)
+  (h : validWitness (Fintype.card V) (#S) (#T) (#(S ∩ T)) p q w = true) :
+  coverNumber (twoAttached ⊤ S T (Fin p) (Fin q)) ≤ 2 * packingNumber (twoAttached ⊤ S T (Fin p) (Fin q))
+'TuzaFiniteFast.c3_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteFast.packing_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteFast.check_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaFiniteFast.check_eq (k s t u p q : ℕ) (w : Witness) : check k s t u p q w = validWitness k s t u p q w
+'TuzaFiniteEnumeration.allRange_sound' depends on axioms: [propext, Quot.sound]
+'TuzaFiniteEnumeration.two_type_checked' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaFiniteEnumeration.one_type_checked' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaFiniteEnumeration.two_type_checked (fallback : ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → Cut) (k : ℕ)
+  (h : coreCheck fallback k = true) (s t u p q : ℕ) (hs : 2 ≤ s) (hst : s ≤ t) (ht : t ≤ k) (hu : s + t - k ≤ u ∧ u ≤ s)
+  (hp : 1 ≤ p ∧ p ≤ colorCount s) (hq : 1 ≤ q ∧ q ≤ colorCount t) :
+  validWitness k s t u p q (choose fallback k s t u p q) = true
+'TuzaHomogeneity.penalty_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaHomogeneity.costOne_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaHomogeneity.costTwo_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaHomogeneity.costThree_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TuzaHomogeneity.costFour_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+TuzaHomogeneity.costFour_scale (k x y w p q : ℝ) (hk : 0 ≤ k) :
+  costFour k (k * x) (k * y) (k * w) (k * p) (k * q) = k ^ 2 * costFour 1 x y w p q
+'TuzaFiniteChunks.allRange_complete' depends on axioms: [propext, Quot.sound]
+'TuzaFiniteChunks.allRange_merge' depends on axioms: [propext, Quot.sound]
+'TuzaFiniteChunks.assemble_core' depends on axioms: [propext, Quot.sound]
+TuzaFiniteChunks.assemble_core (fallback : ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → Cut) (k : ℕ) (hone : oneCheck fallback k = true)
+  (hrows : ∀ (s : ℕ), 2 ≤ s → s ≤ k → allRange s k (pairCheck fallback k s) = true) : coreCheck fallback k = true
