@@ -17,16 +17,20 @@ def main():
         unknown={m for m in imports if m not in names and not m.startswith(('Mathlib.','Lean.','Std.'))}
         if unknown:raise RuntimeError('Unknown import in '+name+': '+str(unknown))
         dependencies[name]=set(imports)&names
+    def memory_for(name):
+        if name in {'GraphReductions','CertificateKernel','NormalizedBounds','Result','IntervalResult'} or name.startswith('IntervalRoot'):return 10000
+        return 2800
     def compile_module(name):
         start=time.monotonic(); logfile=out/(name+'.log')
-        # The four hand-written bridge files compile separately to reserve memory.
-        memory='10000' if name in {'GraphReductions','CertificateKernel','NormalizedBounds','Result'} else '2400'
+        memory=str(memory_for(name))
         command=['lake','env','lean','-j1','-M'+memory,'-DElab.async=false','-o',str(target/(name+'.olean')),str(source/(name+'.lean'))]
         with logfile.open('w') as f:
             p=subprocess.run(command,cwd=work,env=dict(os.environ,LEAN_PATH=str(target)),stdout=f,stderr=subprocess.STDOUT,timeout=600)
         log=logfile.read_text()
         rec={'module':name,'exit_code':p.returncode,'seconds':round(time.monotonic()-start,3),'source_sha256':digest(source/(name+'.lean'))}
-        if p.returncode:raise RuntimeError('Lean failed for '+name+'; see '+logfile.name)
+        if p.returncode:
+            (out/('failure-'+name+'.json')).write_text(json.dumps(rec,indent=2)+'\n')
+            raise RuntimeError('Lean failed for '+name+'; see '+logfile.name)
         if 'sorryAx' in log or 'error:' in log:raise RuntimeError('Invalid proof log: '+name)
         for ax in re.findall(r'depends on axioms: \[(.*?)\]',log,re.S):
             if {a.strip() for a in ax.split(',') if a.strip()}-ALLOWED:raise RuntimeError('Unexpected axioms: '+name)
@@ -44,10 +48,12 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
         while pending or running:
             available=sorted(n for n in pending if dependencies[n]<=done)
-            for name in available[:6-len(running)]:
-                if name in {'NormalizedBounds','Result'} and running:continue
+            reserved=sum(memory_for(n) for n in running.values())
+            for name in available:
+                if len(running)>=6:break
+                if reserved+memory_for(name)>18000:continue
                 pending.remove(name);running[pool.submit(compile_module,name)]=name
-                if name in {'NormalizedBounds','Result'}:break
+                reserved+=memory_for(name)
             if not running:raise RuntimeError('Cyclic or unresolved module dependencies')
             finished,_=concurrent.futures.wait(running,return_when=concurrent.futures.FIRST_COMPLETED)
             for future in finished:running.pop(future);record(future.result())
