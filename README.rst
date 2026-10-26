@@ -7,6 +7,7 @@ independent-side neighborhood types satisfies
 The clique size, the overlap between neighborhoods, and their multiplicities
 are unrestricted. Tuza's conjecture for arbitrary graphs remains open.
 
+`Read the paper (PDF) <https://mathiseveneasier.github.io/tuza-two-types/tuza-two-types.pdf>`_ ·
 `Explore the proof <https://mathiseveneasier.github.io/tuza-two-types/>`_ ·
 `Final Lean theorem <formal/Result.lean>`_ ·
 `Complete certificate sources <https://github.com/MathIsEvenEasier/tuza-two-types/releases/tag/v1.0.0>`_
@@ -47,8 +48,8 @@ Proof route
 5. Proved assembly lemmas connect the numerical certificates back to every
    finite graph in the statement.
 
-The continuous certificate is a proof on a real domain, with exact directed
-integer rounding, certified splitting and exhaustive domain coverage.
+The continuous certificate is a proof on a real domain, with rational
+interval arithmetic, certified splitting and exhaustive domain coverage.
 Normalization includes 1/k, so all k >= 43 lie in a bounded domain covered
 by the certificate.
 
@@ -57,24 +58,24 @@ What is verified
 
 The complete theorem was checked in Lean 4.34.0 on 8 October 2026, with Mathlib
 pinned to ``5ed2965256430c3649e86755f9576b54eca72435``.
-The finished verification assembled hash-matched modules from bounded
-Azure runs. The final dependency list is exactly ``propext``,
+The public source build compiled all 3,190 project modules, without
+precompiled project modules as inputs. The final dependency list is exactly ``propext``,
 ``Classical.choice``, and ``Quot.sound``. There are no project axioms,
 proof holes, unsafe declarations, or native decision shortcuts.
 The generated arithmetic proofs use ``decide +kernel``.
 An intentionally false arithmetic proof was rejected.
 
-`Verification summary <evidence/formalization-report.json>`_ and
-`the exact theorem and axiom log <evidence/Result-compile.log>`_ preserve
-this evidence. The original manifests retain the source and object hashes
-and provenance of every accepted certificate module. Source hashes in the
-release manifest match these previously checked files exactly.
+`Public build 37753142279 <https://github.com/MathIsEvenEasier/tuza-two-types/actions/runs/37753142279>`_
+completed successfully at commit ``214ce3c52898c7036ea7c6489bed80ceaf4ebecf``.
+The `build report <evidence/public-source-build-2026-10-08/provenance.json>`_,
+`theorem and axiom log <evidence/public-source-build-2026-10-08/Result.log>`_,
+and `complete compiler records <evidence/public-source-build-2026-10-08/compiler-records.zip>`_
+are retained in this repository, independently of the Actions artifact's expiry.
+The `cleanup receipt <evidence/public-source-build-2026-10-08/cleanup-report.json>`_
+confirms removal of the build's cloud resources.
 
-The public source-build workflow rebuilds all 3,190 project modules without
-accepting any compiled project objects as input. Its run status is available
-under `Actions <https://github.com/MathIsEvenEasier/tuza-two-types/actions/workflows/lean.yml>`_.
-Each run records how many modules compiled and whether the final theorem
-and negative control passed.
+The October 26 manuscript revision changes the exposition, not the Lean proof
+or certificate sources. Their hashes still match the verified source manifest.
 
 Repository guide
 ----------------
@@ -87,12 +88,13 @@ Repository guide
   the complete classification into the two certificate domains.
 * ``formal/Result.lean``: the unconditional final graph theorem.
 * ``certificates/source-manifest.json``: every source hash and both release assets.
-* ``evidence/``: historical compilation records, final audit and cleanup receipts.
+* ``evidence/public-source-build-2026-10-08/``: successful public source build,
+  complete compiler records, negative control and cleanup receipt.
+* ``evidence/``: original verification records and certificate manifests.
 * ``scripts/`` and ``ci/``: source retrieval and a fresh build on a disposable Azure runner.
 * ``docs/``: self-contained interactive proof guide, served by GitHub Pages.
-* ``research-note.tex``: detailed development notes. The opening status and
-  final formal-verification section describe the completed proof; intermediate
-  sections also preserve earlier routes and historical checkpoints.
+* ``research-note.tex``: the paper's LaTeX source, presenting the final proof.
+* ``docs/tuza-two-types.pdf``: the compiled paper (15 pages).
 
 Reproduce
 ---------
@@ -137,7 +139,9 @@ Context and references
 Zijian Zeng's 2026 preprint proves the two-type case for a specified
 **eight-vertex** clique part, with arbitrary multiplicities. The statement
 here removes the bound on the clique size. Bonamy and coauthors prove the
-threshold-graph case, which includes nested neighborhoods. Publication priority has not been established, and the proof has not yet
+threshold-graph case, which includes nested neighborhoods. Huang et al. subsequently
+reported the three-type case with an eight-vertex clique part; that result
+and ours relax different restrictions. Publication priority has not been established, and the proof has not yet
 received independent expert review.
 
 * M. Bonamy, Ł. Bożyk, A. Grzesik, M. Hatzel, T. Masařík, J. Novotná,
@@ -149,6 +153,9 @@ received independent expert review.
 * L. Chahua and J. Gutiérrez, *On Tuza's conjecture in dense graphs*,
   Discrete Applied Mathematics 377 (2025), 225–233:
   https://arxiv.org/abs/2405.11409
+* Y. Huang et al., *Épi: Towards a Persistent, Self-Improving Agent for
+  Autonomous Research*, 18 October 2026, Section 5.7 and Appendix A.13:
+  https://arxiv.org/abs/2610.24944
 * Mathlib contributors, the pinned implementation of Turán's theorem:
   https://github.com/leanprover-community/mathlib4/blob/5ed2965256430c3649e86755f9576b54eca72435/Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean
 

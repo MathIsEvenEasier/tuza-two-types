@@ -1,0 +1,12 @@
+{
+  "status": "SOURCE_BUILD_VERIFIED",
+  "modules": 3190,
+  "theorem": "TuzaTwoTypes.tuza_of_two_active_types",
+  "axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "all_project_modules_built_from_source": true,
+  "project_olean_inputs": 0
+}

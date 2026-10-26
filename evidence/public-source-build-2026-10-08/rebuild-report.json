@@ -1,0 +1,16 @@
+{
+  "status": "VERIFIED",
+  "modules": 3190,
+  "theorem": "TuzaTwoTypes.tuza_of_two_active_types",
+  "axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "negative_control_rejected": true,
+  "all_project_modules_built_from_source": true,
+  "project_olean_inputs": 0,
+  "memory_limited_attempts": 0,
+  "negative_control_memory_limit_mib": 32000,
+  "negative_control_seconds": 2.524
+}
